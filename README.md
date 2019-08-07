@@ -6,10 +6,11 @@
 - Return dummy data to servers that have experienced downtime
 
 #### How to run?
-- Get to the folder in command line
+- get to the folder in command line
+- create a PostgreSQL database
 - npm install
-- .env
-- migrations
+- adjust .env
+- perform migrations and seeds
 - npm start
 
 #### Tech stack
