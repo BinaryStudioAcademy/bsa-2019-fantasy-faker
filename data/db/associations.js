@@ -1,7 +1,28 @@
 export default (models) => {
-    // const {
-    //     Test
-    // } = models;
+    const {
+        User,
+        Season,
+        PlayerStat,
+        PlayerMatchStat,
+        League,
+        LeagueParticipant,
+        Gameweek,
+        GameweekHistory,
+        Game,
+        FootballClub,
+        Event: MyEvent
+    } = models;
 
-    // define your assosiations here
+    Game.hasMany(FootballClub)
+    Game.hasMany(Gameweek);
+
+    PlayerMatchStat.hasMany(MyEvent);
+    MyEvent.hasMany(Game);
+
+    PlayerStat.hasMany(GameweekHistory);
+
+    FootballClub.hasMany(PlayerStat);
+    FootballClub.hasMany(Game);
+
+    Gameweek.hasMany(GameweekHistory);
 };
