@@ -16,6 +16,12 @@ const app = express();
 const socketServer = http.Server(app);
 const io = socketIO(socketServer);
 
+io.on('connection', socket => {
+    console.log(`connected`);
+    
+    socket.emit('someEvent', { success: true });
+});
+
 sequelize
     .authenticate()
     .then(() => {
