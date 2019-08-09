@@ -4,7 +4,7 @@ export default (orm, DataTypes) => {
     {
       timeStamp: {
         type: 'TIMESTAMP',
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+        defaultValue: orm.literal('CURRENT_TIMESTAMP'),
       },
       eventType: {
         allowNull: false,
