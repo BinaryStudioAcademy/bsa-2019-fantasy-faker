@@ -1,14 +1,11 @@
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+import dotenv from 'dotenv';
 
-const config = {
-  database: process.env.DB_NAME,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  dialect: process.env.DB_DIALECT,
-  logging: false
-};
+dotenv.config();
 
-module.exports = config;
+export const database = process.env.DB_NAME;
+export const username = process.env.DB_USERNAME;
+export const password = process.env.DB_PASSWORD;
+export const host = process.env.DB_HOST;
+export const port = process.env.DB_PORT;
+export const dialect = process.env.DB_DIALECT;
+export const logging = true;
