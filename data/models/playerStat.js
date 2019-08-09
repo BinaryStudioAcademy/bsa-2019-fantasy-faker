@@ -1,5 +1,5 @@
 export default (orm, DataTypes) => {
-  const Player_stat = orm.define(
+  const PlayerStat = orm.define(
     'playerStat',
     {
       firstName: {
