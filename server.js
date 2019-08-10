@@ -17,19 +17,19 @@ const socketServer = http.Server(app);
 const io = socketIO(socketServer);
 
 io.on('connection', socket => {
-    console.log(`connected`);
-    
-    socket.emit('someEvent', { success: true });
+  console.log(`connected`);
+
+  socket.emit('someEvent', { success: true });
 });
 
 sequelize
-    .authenticate()
-    .then(() => {
-        console.log('Connection has been established successfully.');
-    })
-    .catch((err) => {
-        console.error('Unable to connect to the database:', err);
-    });
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch((err) => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 io.on('connection', socketHandlers);
 
@@ -41,13 +41,13 @@ app.use(socketInjector(io));
 routes(app, io);
 
 app.get('/', function (req, res) {
-    res.sendFile(`${__dirname}/assets/index.html`);
+  res.sendFile(`${__dirname}/assets/index.html`);
 });
 
 app.use(errorHandlerMiddleware);
 app.listen(process.env.APP_PORT, () => {
-    // eslint-disable-next-line no-console
-    console.log(`Server listening on port ${process.env.APP_PORT}!`);
+  // eslint-disable-next-line no-console
+  console.log(`Server listening on port ${process.env.APP_PORT}!`);
 });
 
 

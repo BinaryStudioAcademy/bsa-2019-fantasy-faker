@@ -18,3 +18,13 @@ associate({
     FootballClub,
     Event
 });
+
+export {
+    PlayerStat as PlayerStatModel,
+    PlayerMatchStat as PlayerMatchStatModel,
+    Gameweek as GameweekModel,
+    GameweekHistory as GameweekHistory,
+    Game as GameModel,
+    FootballClub as FootballClubModel,
+    Event as EventModel
+};

@@ -161,8 +161,9 @@ export default {
                   allowNull: false,
                   type: Sequelize.ENUM(
                     'goal',
-                    'successful_pass',
-                    'shoot',
+                    'assist',
+                    'missed_pass',
+                    'goal_conceded',
                     'save',
                     'yellow_card',
                     'red_card'
