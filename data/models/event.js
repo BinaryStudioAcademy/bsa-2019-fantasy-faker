@@ -1,18 +1,18 @@
 export default (orm, DataTypes) => {
   const Event = orm.define(
-    'event',
+    "event",
     {
-      timeStamp: DataTypes.DATE,
-      eventType: {
+      timestamp: DataTypes.DATE,
+      event_type: {
         allowNull: false,
         type: DataTypes.ENUM(
-          'goal',
-          'assist',
-          'missed_pass',
-          'goal_conceded',
-          'save',
-          'yellow_card',
-          'red_card'
+          "goal",
+          "assist",
+          "missed_pass",
+          "goal_conceded",
+          "save",
+          "yellow_card",
+          "red_card"
         )
       },
       createdAt: DataTypes.DATE,

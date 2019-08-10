@@ -2,16 +2,16 @@ const now = new Date();
 
 export default [
   {
-    hometeamScore: 23,
-    awayteamScore: 12
+    home_team_score: 23,
+    away_team_score: 12
   },
   {
-    hometeamScore: 21,
-    awayteamScore: 20
+    home_team_score: 21,
+    away_team_score: 20
   },
   {
-    hometeamScore: 13,
-    awayteamScore: 19
+    home_team_score: 13,
+    away_team_score: 19
   }
 ].map(game => ({
   ...game,

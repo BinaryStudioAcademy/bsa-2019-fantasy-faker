@@ -1,6 +1,6 @@
-export default  (orm, DataTypes) => {
+export default (orm, DataTypes) => {
   const PlayerMatchStat = orm.define(
-    'playerMatchStat',
+    "player_match_stat",
     {
       goals: {
         allowNull: false,
@@ -10,11 +10,11 @@ export default  (orm, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      missedPasses: {
+      missed_passes: {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      goalsConceded: {
+      goals_conceded: {
         allowNull: false,
         type: DataTypes.INTEGER
       },
@@ -22,11 +22,11 @@ export default  (orm, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      yellowCards: {
+      yellow_cards: {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      redCards: {
+      red_cards: {
         allowNull: false,
         type: DataTypes.INTEGER
       },

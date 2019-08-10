@@ -2,28 +2,28 @@ export default [
   {
     goals: 0,
     assists: 10,
-    missedPasses: 0,
-    goalsConceded: 2,
+    missed_passes: 0,
+    goals_conceded: 2,
     saves: 6,
-    yellowCards: 0,
-    redCards: 0
+    yellow_cards: 0,
+    red_cards: 0
   },
   {
     goals: 1,
     assists: 20,
-    missedPasses: 3,
-    goalsConceded: 0,
+    missed_passes: 3,
+    goals_conceded: 0,
     saves: 0,
-    yellowCards: 1,
-    redCards: 0
+    yellow_cards: 1,
+    red_cards: 0
   },
   {
     goals: 0,
     assists: 30,
-    missedPasses: 4,
-    goalsConceded: 0,
+    missed_passes: 4,
+    goals_conceded: 0,
     saves: 0,
-    yellowCards: 0,
-    redCards: 0
+    yellow_cards: 0,
+    red_cards: 0
   }
 ];

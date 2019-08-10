@@ -1,6 +1,6 @@
 export default (orm, DataTypes) => {
   const Gameweek = orm.define(
-    'gameweek',
+    "gameweek",
     {
       name: {
         allowNull: false,

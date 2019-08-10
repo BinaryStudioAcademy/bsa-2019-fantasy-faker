@@ -3,128 +3,128 @@ export default {
     queryInterface.sequelize.transaction(transaction =>
       Promise.all([
         queryInterface.addColumn(
-          'playerStats',
-          'clubId',
+          "player_stats",
+          "club_id",
           {
             type: Sequelize.INTEGER,
             references: {
-              model: 'footballClubs',
-              key: 'id'
+              model: "football_clubs",
+              key: "id"
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
           },
           { transaction }
         ),
         queryInterface.addColumn(
-          'games',
-          'hometeamId',
+          "games",
+          "home_team_id",
           {
             type: Sequelize.INTEGER,
             references: {
-              model: 'footballClubs',
-              key: 'id'
+              model: "football_clubs",
+              key: "id"
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
           },
           { transaction }
         ),
         queryInterface.addColumn(
-          'games',
-          'awayteamId',
+          "games",
+          "away_team_id",
           {
             type: Sequelize.INTEGER,
             references: {
-              model: 'footballClubs',
-              key: 'id'
+              model: "football_clubs",
+              key: "id"
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
           },
           { transaction }
         ),
         queryInterface.addColumn(
-          'games',
-          'gameEventId',
+          "games",
+          "game_event_id",
           {
             type: Sequelize.UUID,
             references: {
-              model: 'events',
-              key: 'id'
+              model: "events",
+              key: "id"
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
           },
           { transaction }
         ),
         queryInterface.addColumn(
-          'gameweeks',
-          'gameId',
+          "gameweeks",
+          "game_id",
           {
             type: Sequelize.UUID,
             references: {
-              model: 'games',
-              key: 'id'
+              model: "games",
+              key: "id"
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
           },
           { transaction }
         ),
         queryInterface.addColumn(
-          'gameweekHistories',
-          'gameweekActiveId',
+          "gameweek_histories",
+          "gameweek_active_id",
           {
             type: Sequelize.UUID,
             references: {
-              model: 'gameweeks',
-              key: 'id'
+              model: "gameweeks",
+              key: "id"
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
           },
           { transaction }
         ),
         queryInterface.addColumn(
-          'gameweekHistories',
-          'teamPlayerId',
+          "gameweek_histories",
+          "team_player_id",
           {
             type: Sequelize.UUID,
             references: {
-              model: 'playerStats',
-              key: 'id'
+              model: "player_stats",
+              key: "id"
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
           },
           { transaction }
         ),
         queryInterface.addColumn(
-          'gameweekHistories',
-          'teamCaptainId',
+          "gameweek_histories",
+          "team_captain_id",
           {
             type: Sequelize.UUID,
             references: {
-              model: 'playerStats',
-              key: 'id'
+              model: "player_stats",
+              key: "id"
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
           },
           { transaction }
         ),
         queryInterface.addColumn(
-          'events',
-          'playerId',
+          "events",
+          "player_id",
           {
             type: Sequelize.UUID,
             references: {
-              model: 'playerMatchStats',
-              key: 'id'
+              model: "player_match_stats",
+              key: "id"
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
           },
           { transaction }
         )
@@ -134,21 +134,25 @@ export default {
   down: queryInterface =>
     queryInterface.sequelize.transaction(transaction =>
       Promise.all([
-        queryInterface.removeColumn('playerStats', 'clubId', { transaction }),
-        queryInterface.removeColumn('games', 'hometeamId', { transaction }),
-        queryInterface.removeColumn('games', 'awayteamId', { transaction }),
-        queryInterface.removeColumn('games', 'gameEventId', { transaction }),
-        queryInterface.removeColumn('gameweeks', 'gameId', { transaction }),
-        queryInterface.removeColumn('gameweekHistories', 'gameweekActiveId', {
+        queryInterface.removeColumn("player_stats", "club_id", { transaction }),
+        queryInterface.removeColumn("games", "home_team_id", { transaction }),
+        queryInterface.removeColumn("games", "away_team_id", { transaction }),
+        queryInterface.removeColumn("games", "game_event_id", { transaction }),
+        queryInterface.removeColumn("gameweeks", "game_id", { transaction }),
+        queryInterface.removeColumn(
+          "gameweek_histories",
+          "gameweek_active_id",
+          {
+            transaction
+          }
+        ),
+        queryInterface.removeColumn("gameweek_histories", "team_player_id", {
           transaction
         }),
-        queryInterface.removeColumn('gameweekHistories', 'teamPlayerId', {
+        queryInterface.removeColumn("gameweek_histories", "team_captain_id", {
           transaction
         }),
-        queryInterface.removeColumn('gameweekHistories', 'teamCaptainId', {
-          transaction
-        }),
-        queryInterface.removeColumn('events', 'playerId', { transaction }),
+        queryInterface.removeColumn("events", "player_id", { transaction })
       ])
     )
 };
