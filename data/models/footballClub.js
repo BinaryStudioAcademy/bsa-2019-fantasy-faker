@@ -1,12 +1,12 @@
 export default (orm, DataTypes) => {
   const FootballClub = orm.define(
-    'footballClub',
+    "football_club",
     {
       name: {
         allowNull: false,
         type: DataTypes.STRING
       },
-      shortName: {
+      short_name: {
         allowNull: false,
         type: DataTypes.STRING
       },

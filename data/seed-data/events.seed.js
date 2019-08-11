@@ -2,29 +2,29 @@ const now = new Date();
 
 export default [
   {
-    eventType: 'goal'
+    event_type: "goal"
   },
   {
-    eventType: 'assist'
+    event_type: "assist"
   },
   {
-    eventType: 'missed_pass'
+    event_type: "missed_pass"
   },
   {
-    eventType: 'goal_conceded'
+    event_type: "goal_conceded"
   },
   {
-    eventType: 'save'
+    event_type: "save"
   },
   {
-    eventType: 'yellow_card'
+    event_type: "yellow_card"
   },
   {
-    eventType: 'red_card'
+    event_type: "red_card"
   }
 ].map(ev => ({
   ...ev,
-  timeStamp: now,
+  timestamp: now,
   createdAt: now,
   updatedAt: now
 }));

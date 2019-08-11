@@ -1,26 +1,26 @@
 export default (orm, DataTypes) => {
   const PlayerStat = orm.define(
-    'playerStat',
+    "player_stat",
     {
-      firstName: {
+      first_name: {
         allowNull: false,
         type: DataTypes.STRING
       },
-      secondName: {
+      second_name: {
         allowNull: false,
         type: DataTypes.STRING
       },
-      playerPrice: {
+      player_price: {
         allowNull: false,
         type: DataTypes.FLOAT
       },
-      playerScore: {
+      player_score: {
         allowNull: false,
         type: DataTypes.FLOAT
       },
       position: {
         allowNull: false,
-        type: DataTypes.ENUM('1', '2', '3', '4')
+        type: DataTypes.ENUM("1", "2", "3", "4")
       },
       goals: {
         allowNull: false,
@@ -30,11 +30,11 @@ export default (orm, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      missedPasses: {
+      missed_passes: {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      goalsConceded: {
+      goals_conceded: {
         allowNull: false,
         type: DataTypes.INTEGER
       },
@@ -42,11 +42,11 @@ export default (orm, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      yellowCards: {
+      yellow_cards: {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      redCards: {
+      red_cards: {
         allowNull: false,
         type: DataTypes.INTEGER
       },

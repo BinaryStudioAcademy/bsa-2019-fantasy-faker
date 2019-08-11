@@ -1,4 +1,4 @@
-firstName,secondName,goals,assists,playerScore,missedPasses,redCards,yellowCards,playerPrice,position,goalsConceded,saves,code,clubId
+first_name,second_name,goals,assists,player_score,missed_passes,red_cards,yellow_cards,player_price,position,goals_conceded,saves,code,club_id
 Pierre-Emerick,Aubameyang,22,7,205,42,0,0,110,4,0,0,54694,1
 Héctor,Bellerín,0,5,60,21,0,3,55,2,0,0,98745,1
 Mohamed,Elneny,0,0,10,5,0,0,45,3,0,0,153256,1

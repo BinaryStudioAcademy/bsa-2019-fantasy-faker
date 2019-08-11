@@ -1,6 +1,6 @@
 export default (orm, DataTypes) => {
   const GameweekHistory = orm.define(
-    'gameweekHistory',
+    "gameweek_history",
     {
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE

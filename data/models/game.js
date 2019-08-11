@@ -8,11 +8,11 @@ export default (orm, DataTypes) => {
       end: {
         type: DataTypes.DATE
       },
-      hometeamScore: {
+      home_team_score: {
         allowNull: false,
         type: DataTypes.FLOAT
       },
-      awayteamScore: {
+      away_team_score: {
         allowNull: false,
         type: DataTypes.FLOAT
       },
