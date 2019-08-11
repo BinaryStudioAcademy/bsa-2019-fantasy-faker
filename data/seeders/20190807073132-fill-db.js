@@ -53,8 +53,8 @@ export default {
 
       const gameMappedSeeds = gamesSeed.map((game, i) => ({
         ...game,
-        home_team_id: footballClubs[randomIndex(footballClubs.length)].id,
-        away_team_id: footballClubs[randomIndex(footballClubs.length)].id,
+        hometeam_id: footballClubs[randomIndex(footballClubs.length)].id,
+        awayteam_id: footballClubs[randomIndex(footballClubs.length)].id,
         game_event_id: events[randomIndex(events.length)].id
       }));
 

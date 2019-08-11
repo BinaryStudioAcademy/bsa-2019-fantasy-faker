@@ -18,7 +18,7 @@ export default {
         ),
         queryInterface.addColumn(
           "games",
-          "home_team_id",
+          "hometeam_id",
           {
             type: Sequelize.INTEGER,
             references: {
@@ -32,7 +32,7 @@ export default {
         ),
         queryInterface.addColumn(
           "games",
-          "away_team_id",
+          "awayteam_id",
           {
             type: Sequelize.INTEGER,
             references: {
@@ -135,8 +135,8 @@ export default {
     queryInterface.sequelize.transaction(transaction =>
       Promise.all([
         queryInterface.removeColumn("player_stats", "club_id", { transaction }),
-        queryInterface.removeColumn("games", "home_team_id", { transaction }),
-        queryInterface.removeColumn("games", "away_team_id", { transaction }),
+        queryInterface.removeColumn("games", "hometeam_id", { transaction }),
+        queryInterface.removeColumn("games", "awayteam_id", { transaction }),
         queryInterface.removeColumn("games", "game_event_id", { transaction }),
         queryInterface.removeColumn("gameweeks", "game_id", { transaction }),
         queryInterface.removeColumn(
