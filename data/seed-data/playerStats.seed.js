@@ -1,34 +1,28 @@
-import csv from "csv-parser";
-import fs from "fs";
-import path from "path";
+import csv from 'csv-parser';
+import fs from 'fs';
+import path from 'path';
 
 const now = new Date();
 const results = [];
 
 const promise = new Promise((resolve, reject) => {
-  fs.createReadStream(
-    path.resolve(__dirname, "../seed-data/csv/player-stats.csv")
-  )
+  fs.createReadStream(path.resolve(__dirname, '../seed-data/csv/player-stats.csv'))
     .pipe(
       csv({
         mapValues: ({ header, index, value }) => {
-          if (
-            header != "first_name" &&
-            header != "second_name" &&
-            header != "position"
-          ) {
+          if (header != 'first_name' && header != 'second_name' && header != 'position') {
             return parseFloat(value);
           }
           return value;
         }
       })
     )
-    .on("data", data => {
+    .on('data', data => {
       data.createdAt = now;
       data.updatedAt = now;
       results.push(data);
     })
-    .on("end", () => {
+    .on('end', () => {
       resolve(results);
     });
 });
