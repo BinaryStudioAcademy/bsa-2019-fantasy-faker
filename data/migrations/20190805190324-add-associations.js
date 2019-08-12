@@ -59,12 +59,12 @@ export default {
           { transaction }
         ),
         queryInterface.addColumn(
-          'gameweeks',
-          'game_id',
+          'games',
+          'gameweek_id',
           {
             type: Sequelize.UUID,
             references: {
-              model: 'games',
+              model: 'gameweeks',
               key: 'id'
             },
             onUpdate: 'CASCADE',
