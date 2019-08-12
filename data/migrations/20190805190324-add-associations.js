@@ -115,6 +115,20 @@ export default {
           { transaction }
         ),
         queryInterface.addColumn(
+          'gameweek_histories',
+          'team_bench_id',
+          {
+            type: Sequelize.UUID,
+            references: {
+              model: 'player_stats',
+              key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL'
+          },
+          { transaction }
+        ),
+        queryInterface.addColumn(
           'events',
           'player_id',
           {

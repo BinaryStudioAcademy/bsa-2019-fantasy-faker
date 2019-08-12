@@ -1,3 +1,5 @@
+const now = new Date();
+
 export default [
   {
     goals: 0,
@@ -26,4 +28,8 @@ export default [
     yellow_cards: 0,
     red_cards: 0
   }
-];
+].map(stats => ({
+  ...stats,
+  createdAt: now,
+  updatedAt: now
+}));

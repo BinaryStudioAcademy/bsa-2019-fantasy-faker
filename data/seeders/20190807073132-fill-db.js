@@ -67,7 +67,8 @@ export default {
         ...history,
         gameweek_active_id: gameweeks[randomIndex(gameweeks.length)].id,
         team_player_id: playerStats[randomIndex(playerStats.length)].id,
-        team_captain_id: playerStats[randomIndex(playerStats.length)].id
+        team_captain_id: playerStats[randomIndex(playerStats.length)].id,
+        team_bench_id: playerStats[randomIndex(playerStats.length)].id
       }));
 
       await queryInterface.bulkInsert(
