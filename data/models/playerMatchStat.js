@@ -1,6 +1,6 @@
 export default (orm, DataTypes) => {
   const PlayerMatchStat = orm.define(
-    "player_match_stat",
+    'player_match_stat',
     {
       goals: {
         allowNull: false,

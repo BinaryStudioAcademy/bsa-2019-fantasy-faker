@@ -5,6 +5,8 @@ import eventsSeed from '../seed-data/events.seed';
 import gamesSeed from '../seed-data/games.seed';
 import gameweeksSeed from '../seed-data/gameweeks.seed';
 import gameweekHistoriesSeed from '../seed-data/gameweekHistories.seed';
+import seasonsSeed from '../seed-data/seasons.seed';
+import teamMemberHistoriesSeed from '../seed-data/teamMemberHistories.seed';
 
 const randomIndex = length => Math.floor(Math.random() * length);
 
@@ -36,39 +38,47 @@ export default {
         options
       );
 
-      const eventMappedSeeds = eventsSeed.map((event, i) => ({
-        ...event,
-        player_id: playerMatchStats[randomIndex(playerMatchStats.length)].id
-      }));
-
-      await queryInterface.bulkInsert('events', eventMappedSeeds, {});
-      const events = await queryInterface.sequelize.query(
-        'SELECT id FROM "events";',
+      await queryInterface.bulkInsert('seasons', seasonsSeed, {});
+      const seasons = await queryInterface.sequelize.query(
+        'SELECT id FROM "seasons";',
         options
       );
 
-      await queryInterface.bulkInsert('gameweeks', gameweeksSeed, {});
+      const gameweeksMapSeeds = gameweeksSeed.map(week => ({
+        ...week,
+        season_id: seasons[randomIndex(seasons.length)].id
+      }));
+
+      await queryInterface.bulkInsert('gameweeks', gameweeksMapSeeds);
       const gameweeks = await queryInterface.sequelize.query(
         'SELECT id FROM "gameweeks";',
         options
       );
 
-      const gameMappedSeeds = gamesSeed.map((game, i) => ({
+      const gameMappedSeeds = gamesSeed.map(game => ({
         ...game,
         hometeam_id: footballClubs[randomIndex(footballClubs.length)].id,
         awayteam_id: footballClubs[randomIndex(footballClubs.length)].id,
-        game_event_id: events[randomIndex(events.length)].id,
         gameweek_id: gameweeks[randomIndex(gameweeks.length)].id
       }));
 
       await queryInterface.bulkInsert('games', gameMappedSeeds, {});
+      const games = await queryInterface.sequelize.query(
+        'SELECT id FROM "games";',
+        options
+      );
+
+      const eventMappedSeeds = eventsSeed.map(event => ({
+        ...event,
+        player_id: playerMatchStats[randomIndex(playerMatchStats.length)].id,
+        game_id: games[randomIndex(games.length)].id
+      }));
+
+      await queryInterface.bulkInsert('events', eventMappedSeeds, {});
 
       const gameweekHistoryMappedSeeds = gameweekHistoriesSeed.map(history => ({
         ...history,
-        gameweek_active_id: gameweeks[randomIndex(gameweeks.length)].id,
-        team_player_id: playerStats[randomIndex(playerStats.length)].id,
-        team_captain_id: playerStats[randomIndex(playerStats.length)].id,
-        team_bench_id: playerStats[randomIndex(playerStats.length)].id
+        gameweek_id: gameweeks[randomIndex(gameweeks.length)].id
       }));
 
       await queryInterface.bulkInsert(
@@ -76,12 +86,28 @@ export default {
         gameweekHistoryMappedSeeds,
         {}
       );
+      const gameweekHistories = await queryInterface.sequelize.query(
+        'SELECT id FROM "gameweek_histories";',
+        options
+      );
+
+      const teamMemberHistoriesMappedSeeds = teamMemberHistoriesSeed.map(member => ({
+        ...member,
+        player_id: playerStats[randomIndex(playerStats.length)].id,
+        gameweek_history_id: gameweekHistories[randomIndex(gameweekHistories.length)].id
+      }));
+
+      await queryInterface.bulkInsert(
+        'team_member_histories',
+        teamMemberHistoriesMappedSeeds,
+        {}
+      );
     } catch (err) {
       console.log(`Seeding error: ${err}`);
     }
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async queryInterface => {
     try {
       await queryInterface.bulkDelete('events', null, {});
       await queryInterface.bulkDelete('football_clubs', null, {});
@@ -90,6 +116,8 @@ export default {
       await queryInterface.bulkDelete('gameweeks', null, {});
       await queryInterface.bulkDelete('player_match_stats', null, {});
       await queryInterface.bulkDelete('player_stats', null, {});
+      await queryInterface.bulkDelete('team_member_histories', null, {});
+      await queryInterface.bulkDelete('seasons', null, {});
     } catch (err) {
       console.log(`Seeding error: ${err}`);
     }

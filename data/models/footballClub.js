@@ -1,6 +1,6 @@
 export default (orm, DataTypes) => {
   const FootballClub = orm.define(
-    "football_club",
+    'football_club',
     {
       name: {
         allowNull: false,
@@ -19,6 +19,10 @@ export default (orm, DataTypes) => {
         type: DataTypes.INTEGER
       },
       played: {
+        allowNull: false,
+        type: DataTypes.INTEGER
+      },
+      code: {
         allowNull: false,
         type: DataTypes.INTEGER
       },

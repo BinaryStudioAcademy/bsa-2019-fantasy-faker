@@ -1,16 +1,10 @@
 export default (orm, DataTypes) => {
-  const Gameweek = orm.define(
-    'gameweek',
+  const Season = orm.define(
+    'season',
     {
       name: {
         allowNull: false,
         type: DataTypes.STRING
-      },
-      start: {
-        type: DataTypes.DATE
-      },
-      end: {
-        type: DataTypes.DATE
       },
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE
@@ -18,5 +12,5 @@ export default (orm, DataTypes) => {
     {}
   );
 
-  return Gameweek;
+  return Season;
 };

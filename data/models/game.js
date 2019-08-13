@@ -1,6 +1,6 @@
 export default (orm, DataTypes) => {
   const Game = orm.define(
-    "game",
+    'game',
     {
       start: {
         type: DataTypes.DATE
