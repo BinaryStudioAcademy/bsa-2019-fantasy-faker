@@ -1,4 +1,4 @@
-export default (models) => {
+export default models => {
   const {
     PlayerStat,
     PlayerMatchStat,
@@ -6,19 +6,22 @@ export default (models) => {
     GameweekHistory,
     Game,
     FootballClub,
-    Event: MyEvent
+    Event,
+    TeamMemberHistory,
+    Seasons
   } = models;
 
-  // Game.hasMany(FootballClub)
-  // Game.hasMany(Gameweek);
+  TeamMemberHistory.belongsTo(PlayerStat, {
+    foreignKey: 'player_id',
+    as: 'player_stats'
+  });
 
-  // PlayerMatchStat.hasMany(MyEvent);
-  // MyEvent.hasMany(Game);
+  // You can use templates below to test associations (run npm start)
 
-  // PlayerStat.hasMany(GameweekHistory);
-
-  // FootballClub.hasMany(PlayerStat);
-  // FootballClub.hasMany(Game);
-
-  // Gameweek.hasMany(GameweekHistory);
+  // TeamMemberHistory.findOne({
+  //   where: { is_captain: true },
+  //   include: 'player_stats'
+  // }).then(teamMember => {
+  //   console.log(teamMember);
+  // });
 };

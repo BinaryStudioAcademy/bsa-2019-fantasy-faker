@@ -9,7 +9,7 @@ const Game = orm.import('./game');
 const FootballClub = orm.import('./footballClub');
 const Event = orm.import('./event');
 const Season = orm.import('./season');
-const TeamMemberHistory = orm.import('./team-member-history');
+const TeamMemberHistory = orm.import('./teamMemberHistory');
 
 associate({
   PlayerStat,

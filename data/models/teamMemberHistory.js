@@ -1,5 +1,5 @@
 export default (orm, DataTypes) => {
-  const GameweekHistory = orm.define(
+  const TeamMemberHistory = orm.define(
     'team_member_history',
     {
       is_on_bench: {
@@ -16,5 +16,5 @@ export default (orm, DataTypes) => {
     {}
   );
 
-  return GameweekHistory;
+  return TeamMemberHistory;
 };
