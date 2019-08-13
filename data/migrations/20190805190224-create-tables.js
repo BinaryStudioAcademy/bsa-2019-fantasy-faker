@@ -21,11 +21,11 @@ export default {
               },
               hometeam_score: {
                 allowNull: false,
-                type: Sequelize.FLOAT
+                type: Sequelize.INTEGER
               },
               awayteam_score: {
                 allowNull: false,
-                type: Sequelize.FLOAT
+                type: Sequelize.INTEGER
               },
               createdAt: Sequelize.DATE,
               updatedAt: Sequelize.DATE
