@@ -16,6 +16,9 @@ export default models => {
     as: 'player_stats'
   });
 
+  Event.belongsTo(Game, { foreignKey: 'game_id', as: 'games' });
+  Event.belongsTo(PlayerMatchStat, { foreignKey: 'player_id', as: 'player_match_stats' });
+
   // You can use templates below to test associations (run npm start)
 
   // TeamMemberHistory.findOne({
