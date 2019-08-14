@@ -7,6 +7,7 @@ import routes from './api/routes/index';
 import errorHandlerMiddleware from './api/middlewares/error-handler.middleware';
 import socketInjector from './socket/injector';
 import socketHandlers from './socket/handlers';
+import generateEvents from './socket/generateEvents';
 
 import sequelize from './data/db/connection';
 
@@ -16,20 +17,19 @@ const app = express();
 const socketServer = http.Server(app);
 const io = socketIO(socketServer);
 
-io.on('connection', socket => {
-  console.log(`connected`);
-
-  socket.emit('someEvent', { success: true });
-});
-
 sequelize
   .authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
   })
-  .catch((err) => {
+  .catch(err => {
     console.error('Unable to connect to the database:', err);
   });
+
+io.on('connection', socket => {
+  console.log(`connected`);
+  generateEvents(socket);
+});
 
 io.on('connection', socketHandlers);
 
@@ -40,7 +40,7 @@ app.use(socketInjector(io));
 
 routes(app, io);
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
   res.sendFile(`${__dirname}/assets/index.html`);
 });
 
@@ -49,6 +49,5 @@ app.listen(process.env.APP_PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Server listening on port ${process.env.APP_PORT}!`);
 });
-
 
 socketServer.listen(process.env.SOCKET_PORT);
