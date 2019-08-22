@@ -4,12 +4,13 @@ export default socket => {
   console.log("Socket connection established");
 
   // delete next block after test
-  // const props = {
-  // homeClubId: 2,
-  // awayClubId: 3,
-  // timeout: 10
-  // };
-  // eventGenerator.initGame(props, socket);
+
+  const props = {
+    homeClubId: 2,
+    awayClubId: 3,
+    timeout: 3
+  };
+  eventGenerator.initGame(props, socket);
 
   socket.on("createRoom", roomId => {
     socket.join(roomId);
