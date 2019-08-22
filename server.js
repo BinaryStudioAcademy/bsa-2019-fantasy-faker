@@ -1,15 +1,15 @@
-import dotenv from "dotenv";
-import express from "express";
-import http from "http";
-import socketIO from "socket.io";
+import dotenv from 'dotenv';
+import express from 'express';
+import http from 'http';
+import socketIO from 'socket.io';
 
-import routes from "./api/routes/index";
-import errorHandlerMiddleware from "./api/middlewares/error-handler.middleware";
-import socketInjector from "./socket/injector";
-import socketHandlers from "./socket/handlers";
-import generateEvents from "./socket/generateEvents";
+import routes from './api/routes/index';
+import errorHandlerMiddleware from './api/middlewares/error-handler.middleware';
+import socketInjector from './socket/injector';
+import socketHandlers from './socket/handlers';
+import generateEvents from './socket/generateEvents';
 
-import sequelize from "./data/db/connection";
+import sequelize from './data/db/connection';
 
 dotenv.config();
 
@@ -20,13 +20,18 @@ const io = socketIO(socketServer);
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Connection has been established successfully.");
+    console.log('Connection has been established successfully.');
   })
   .catch(err => {
-    console.error("Unable to connect to the database:", err);
+    console.error('Unable to connect to the database:', err);
   });
 
-io.on("connection", socketHandlers);
+io.on('connection', socket => {
+  console.log(`connected`);
+  generateEvents(socket);
+});
+
+io.on('connection', socketHandlers);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -35,7 +40,7 @@ app.use(socketInjector(io));
 
 routes(app, io);
 
-app.get("/", function(req, res) {
+app.get('/', function(req, res) {
   res.sendFile(`${__dirname}/assets/index.html`);
 });
 
