@@ -5,6 +5,8 @@ import {
   PlayerMatchStatModel
 } from '../data/models/index';
 
+const GAME_EVENTS_COUNT = 1;
+
 const events = [
   'goal',
   'assist',
@@ -15,33 +17,31 @@ const events = [
   'red_card'
 ];
 
-function delay() {
-  return new Promise(resolve => setTimeout(resolve, 5000));
-}
+// function delay() {
+//   return new Promise(resolve => setTimeout(resolve, 5000));
+// }
 
 const randomIndex = length => Math.floor(Math.random() * length);
 
-export default async function generateEvents(socket) {
+export default async function generateEvents(socket, game, hometeam, awayteam) {
   try {
-    // const team1 = await PlayerStatModel.findAll({ limit: 11 });
-    // const team2 = await PlayerStatModel.findAll({ offset: 11, limit: 11 });
-    // const players = [...team1, ...team2];
-    const matchStats = await PlayerMatchStatModel.findAll();
-    const game = await GameModel.findOne();
+    const players = [...hometeam, ...awayteam];
+    // find needed match stats
+    // const matchStats = await PlayerMatchStatModel.findAll();
 
-    // let randomPlayer = players[randomIndex(players.length)].id;
+    let randomPlayer = players[randomIndex(players.length)].id;
 
-    for (let i = 0; i < 35; i++) {
+    for (let i = 0; i < GAME_EVENTS_COUNT; i++) {
       let randomEvent = events[randomIndex(events.length)];
       let randomMatchStats = matchStats[randomIndex(matchStats.length)].id;
 
       const recordToCreate = {
-        event_type: randomEvent,
-        player_id: randomMatchStats,
+        event: randomEvent,
+        player_match_stats_id: randomMatchStats,
         game_id: game.id
       };
-      await delay();
-      const createdRecord = await EventModel.create(recordToCreate);
+      // await delay();
+      // const createdRecord = await EventModel.create(recordToCreate);
       socket.emit('someEvent', { createdRecord });
     }
   } catch (err) {

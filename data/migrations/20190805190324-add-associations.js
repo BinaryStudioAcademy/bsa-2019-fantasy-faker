@@ -141,7 +141,21 @@ export default {
             onDelete: "SET NULL"
           },
           { transaction }
-        )
+        ),
+        queryInterface.addColumn(
+          'player_match_stats',
+          'game_id',
+          {
+            type: Sequelize.UUID,
+            references: {
+              model: 'games',
+              key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL',
+          },
+          { transaction },
+        ),
       ])
     ),
 
@@ -151,6 +165,9 @@ export default {
         queryInterface.removeColumn("player_stats", "club_id", { transaction }),
         queryInterface.removeColumn("games", "hometeam_id", { transaction }),
         queryInterface.removeColumn("games", "awayteam_id", { transaction }),
+        queryInterface.removeColumn('games', 'gameweek_id', {
+          transaction,
+        }),
         queryInterface.removeColumn("gameweeks", "season_id", {
           transaction
         }),
@@ -173,7 +190,10 @@ export default {
         ),
         queryInterface.removeColumn("player_match_stats", "player_id", {
           transaction
-        })
+        }),
+        queryInterface.removeColumn('player_match_stats', 'game_id', {
+          transaction,
+        }),
       ])
     )
 };
