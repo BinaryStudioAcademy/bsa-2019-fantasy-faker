@@ -19,10 +19,13 @@ class eventGenerator {
     this.eventHandlers = {
       goal: event => {
         const [home, away] = this.score;
-        this.score = [
-          event.team === "home" && home + 1,
-          event.team === "away" && away + 1
-        ];
+
+        if (event.team === "home") {
+          this.score = [home + 1, away];
+        } else if (event.team === "away") {
+          this.score = [home, away + 1];
+        }
+        console.log(this.score);
         return { score: this.score };
       }
     };
@@ -37,8 +40,12 @@ class eventGenerator {
       console.error(error);
     }
   }
+
+  checkStatus() {
+    return { gameStarted: this.gameStarted };
+  }
+
   async initGame(data, socket) {
-    if (this.gameStarted) return "game is already started";
     this.gameStarted = true;
     this.setTimestamp("initGame");
 
@@ -73,7 +80,7 @@ class eventGenerator {
 
   startGame() {
     this.setTimestamp("startGame");
-    this.emit({ name: "start-game" });
+    this.emit({ name: "startGame" });
     this.timesCount = 0;
     this.timeouts.startTime = setTimeout(
       () => this.startTime(),
@@ -83,8 +90,12 @@ class eventGenerator {
 
   startTime() {
     this.timesCount++;
-    this.setTimestamp("startTime", { update: { time: this.timesCount } });
-    this.emit({ name: "start-time", time: this.timesCount, elapsed: 0 });
+    this.setTimestamp("startTime", this.timesCount);
+    this.emit({
+      name: "startTime",
+      update: { time: this.timesCount },
+      elapsed: 0
+    });
     this.timeouts.endTime = setTimeout(
       () => this.endTime(),
       TIME_DURATION * 1000
@@ -99,9 +110,9 @@ class eventGenerator {
     clearInterval(this.eventCycleInterval);
     this.setTimestamp("endTime", this.timesCount);
     this.emit({
-      name: "end-time",
+      name: "endTime",
       time: this.timesCount,
-      elapsed: this.elapsed(now)
+      elapsed: this.elapsed()
     });
     if (this.timesCount === 2) return this.endGame();
     this.timeouts.startTime = setTimeout(
@@ -122,24 +133,22 @@ class eventGenerator {
     clearInterval(this.eventCycleInterval);
     clearInterval(this.timeouts.endTime);
     clearInterval(this.timeouts.endGame);
-    this.emit({ name: "stop-game", elapsed: this.elapsed(now) });
+    this.emit({ name: "stopGame", elapsed: this.elapsed() });
   }
 
-  elapsed(now) {
-    return Math.round(
+  elapsed(now = Date.now()) {
+    const elapsed = Math.round(
       ((now - this.timestamps.startTime[1]) / TIME_DURATION) * 45 * 60
     );
+    return elapsed;
   }
 
   eventGenerator() {
     const event = this.eventCycle.next().value;
     this.prevEvent = event;
     this.possibleNextEvent = probabilities[event.after] || probabilities.game;
-
     const update = this.handleEvent(event);
-
-    const now = Date.now();
-    this.emit({ ...event, update, elapsed: this.elapsed(now) });
+    this.emit({ ...event, update, elapsed: this.elapsed() });
   }
 
   *eventCycleGenerator() {
@@ -147,6 +156,7 @@ class eventGenerator {
 
     while (true) {
       const eventType = this.getProbableKey(this.possibleNextEvent);
+      //console.log(eventType);
       const eventObject = events[eventType];
       const { team, player } = this.handleDirection(eventObject);
       const event = { ...eventObject, team, player };
@@ -220,7 +230,7 @@ class eventGenerator {
       if (random < topLimit) return key;
     }
     const defaultKey = Object.keys(obj).find(key => obj[key] === undefined);
-    return defaultKey;
+    return defaultKey || "nothing";
   }
 
   generateText(data) {
@@ -235,18 +245,18 @@ class eventGenerator {
 
   emit(data) {
     const { name, team, player, update, elapsed } = data;
-    const { first_name, last_name, id, position } = player || {};
+    const { first_name, second_name, id, position } = player || {};
 
     const event = {
       name,
-      player: player ? { first_name, last_name, id, position } : undefined,
+      player: player ? { first_name, second_name, id, position } : undefined,
       team,
-      update,
       elapsed,
-      text: this.generateText(data)
+      text: this.generateText(data),
+      ...update
     };
 
-    console.log(data);
+    console.log(event.text);
     this.socket.emit("event", event);
   }
 }

@@ -19,27 +19,35 @@
 
 export const probabilities = {
   game: {
-    shot: 20,
+    attack: 30,
     foul: 10,
     out: 10,
     nothing: undefined,
     _normalize: true
   },
-  afterShot: {
-    goal: 10,
-    save: 5,
-    missed: 5,
-    interception: 5
+  afterAttack: {
+    attack: 0.1,
+    shot: 0.4,
+    interception: 0.2,
+    foul: 0.1,
+    out: 0.1
   },
-  afterMissed: {
+  afterShot: {
+    goal: 0.3,
+    save: 0.3,
+    miss: 0.3,
+    interception: 0.1
+  },
+  afterMiss: {
     cornerKick: 0.3,
-    goalKick: 0.3
+    goalKick: 0.3,
+    nothing: 0.4
   },
   afterCornerKick: {
-    goal: 10,
-    save: 5,
-    missed: 5,
-    interception: 5
+    goal: 0.2,
+    save: 0.4,
+    miss: 0.1,
+    interception: 0.3
   },
   afterFoul: {
     freeKick: 0.6,
@@ -51,15 +59,26 @@ export const probabilities = {
     penaltyKick: 0.2
   },
   afterPenalty: {
-    goal: 0.3,
-    missed: 0.3,
-    save: 0.3
+    goal: 0.55,
+    miss: 0.2,
+    save: 0.25
   }
 };
 
 export const events = {
+  attack: {
+    name: "attack",
+    subject: {
+      FWD: 0.5,
+      MID: 0.4,
+      DEF: 0.1,
+      GKP: 0
+    },
+    after: "afterAttack"
+  },
   shot: {
     name: "shot",
+    direction: "sameTeam",
     subject: {
       FWD: 0.5,
       MID: 0.3,
@@ -90,7 +109,7 @@ export const events = {
     direction: "otherTeam"
   },
 
-  missed: { name: "missed", direction: "samePlayer", after: "afterMissed" },
+  miss: { name: "miss", direction: "samePlayer", after: "afterMiss" },
 
   yellowCard: {
     name: "yellowCard",
@@ -144,6 +163,7 @@ export const events = {
 
   interception: {
     name: "interception",
+    direction: "otherTeam",
     subject: {
       FWD: 0.2,
       MID: 0.3,
