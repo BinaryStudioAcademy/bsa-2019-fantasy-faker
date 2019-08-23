@@ -1,5 +1,5 @@
 gameweek_id,finished,start,minutes,started,awayteam_id,awayteam_score,hometeam_id,hometeam_score
-1,false,2019-08-09T19:00:00Z,90,false,14,1,10,4
+1,true,2019-08-09T19:00:00Z,90,true,14,1,10,4
 1,false,2019-08-10T11:30:00Z,90,false,11,5,19,0
 1,false,2019-08-10T14:00:00Z,90,false,15,1,3,1
 1,false,2019-08-10T14:00:00Z,90,false,16,0,5,3

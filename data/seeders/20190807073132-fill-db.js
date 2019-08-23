@@ -32,6 +32,23 @@ export default {
         options
       );
 
+      await queryInterface.bulkInsert('seasons', seasonsSeed, {});
+      const seasons = await queryInterface.sequelize.query(
+        'SELECT id FROM "seasons";',
+        options
+      );
+
+      const gameweeksMapSeeds = gameweeksSeed.map(week => ({
+        ...week,
+        season_id: seasons[randomIndex(seasons.length)].id
+      }));
+
+      await queryInterface.bulkInsert('gameweeks', gameweeksMapSeeds);
+      const gameweeks = await queryInterface.sequelize.query(
+        'SELECT id FROM "gameweeks";',
+        options
+      );
+
       seedsData = await gamesSeed;
       await queryInterface.bulkInsert('games', seedsData, {});
       const games = await queryInterface.sequelize.query(
@@ -48,23 +65,6 @@ export default {
       await queryInterface.bulkInsert('player_match_stats', playerMatchMappedSeed, {});
       const playerMatchStats = await queryInterface.sequelize.query(
         'SELECT id FROM "player_match_stats";',
-        options
-      );
-
-      await queryInterface.bulkInsert('seasons', seasonsSeed, {});
-      const seasons = await queryInterface.sequelize.query(
-        'SELECT id FROM "seasons";',
-        options
-      );
-
-      const gameweeksMapSeeds = gameweeksSeed.map(week => ({
-        ...week,
-        season_id: seasons[randomIndex(seasons.length)].id
-      }));
-
-      await queryInterface.bulkInsert('gameweeks', gameweeksMapSeeds);
-      const gameweeks = await queryInterface.sequelize.query(
-        'SELECT id FROM "gameweeks";',
         options
       );
 
