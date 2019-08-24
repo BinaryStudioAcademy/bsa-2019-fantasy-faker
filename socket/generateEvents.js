@@ -1,13 +1,9 @@
-import {
-  EventModel,
-  PlayerStatModel,
-  GameModel,
-  PlayerMatchStatModel
-} from '../data/models/index';
+import * as playerMatchStatService from '../api/services/playerMatchStat.service';
+import * as eventService from '../api/services/event.service';
 
-const GAME_EVENTS_COUNT = 1;
+const GAME_EVENTS_COUNT = 35;
 
-const events = [
+const EVENTS = [
   'goal',
   'assist',
   'missed_pass',
@@ -17,32 +13,41 @@ const events = [
   'red_card'
 ];
 
-// function delay() {
-//   return new Promise(resolve => setTimeout(resolve, 5000));
-// }
+const PLAYER_STATS = {
+  goal: 'goals',
+  assist: 'assists',
+  missed_pass: 'missed_passes',
+  goal_conceded: 'goals_conceded',
+  save: 'saves',
+  yellow_card: 'yellow_cards',
+  red_card: 'red_cards'
+};
 
 const randomIndex = length => Math.floor(Math.random() * length);
 
-export default async function generateEvents(socket, game, hometeam, awayteam) {
+export default async function generateEvents(game, hometeam, awayteam) {
   try {
     const players = [...hometeam, ...awayteam];
-    // find needed match stats
-    // const matchStats = await PlayerMatchStatModel.findAll();
-
-    let randomPlayer = players[randomIndex(players.length)].id;
 
     for (let i = 0; i < GAME_EVENTS_COUNT; i++) {
-      let randomEvent = events[randomIndex(events.length)];
-      let randomMatchStats = matchStats[randomIndex(matchStats.length)].id;
+      const randomEvent = EVENTS[randomIndex(EVENTS.length)];
+      const randomPlayer = players[randomIndex(players.length)];
 
-      const recordToCreate = {
-        event: randomEvent,
-        player_match_stats_id: randomMatchStats,
-        game_id: game.id
-      };
-      // await delay();
-      // const createdRecord = await EventModel.create(recordToCreate);
-      socket.emit('someEvent', { createdRecord });
+      // TODO add checking events connected with score
+      const isGoalkeeperEvent =
+        randomEvent === 'save' || randomEvent === 'goal_conceded';
+      if (
+        (randomPlayer.position === '1' && isGoalkeeperEvent) ||
+        (randomPlayer.position !== '1' && !isGoalkeeperEvent)
+      ) {
+        await playerMatchStatService.updatePlayer(
+          randomPlayer.id,
+          game.id,
+          PLAYER_STATS[randomEvent]
+        );
+ 
+        await eventService.createEvent(randomEvent, randomPlayer.id, game.id);
+      }
     }
   } catch (err) {
     console.log(err);
