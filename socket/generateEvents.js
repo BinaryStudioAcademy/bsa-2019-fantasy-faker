@@ -1,5 +1,6 @@
 import * as playerMatchStatService from '../api/services/playerMatchStat.service';
 import * as eventService from '../api/services/event.service';
+import * as gameService from '../api/services/game.service';
 
 const GAME_EVENTS_COUNT = 35;
 
@@ -26,8 +27,12 @@ const PLAYER_STATS = {
 const randomIndex = length => Math.floor(Math.random() * length);
 
 export default async function generateEvents(game, hometeam, awayteam) {
+  console.log('awayteam: ', awayteam);
+  console.log('hometeam: ', hometeam);
   try {
     const players = [...hometeam, ...awayteam];
+    let hometeamScore = 0;
+    let awayteamScore = 0;
 
     for (let i = 0; i < GAME_EVENTS_COUNT; i++) {
       const randomEvent = EVENTS[randomIndex(EVENTS.length)];
@@ -47,8 +52,18 @@ export default async function generateEvents(game, hometeam, awayteam) {
           game.id,
           PLAYER_STATS[randomEvent]
         );
+
+        if (randomEvent === 'goal') {
+          if (hometeam.some(item => item.id === randomPlayer.id)) {
+            hometeamScore++
+          } else {
+            awayteamScore++
+          }
+        }
       }
     }
+
+    await gameService.updateGameScore(game.id, hometeamScore, awayteamScore);
   } catch (err) {
     console.log(err);
   }

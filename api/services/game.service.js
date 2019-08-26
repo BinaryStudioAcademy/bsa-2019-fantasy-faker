@@ -18,3 +18,12 @@ export const updateGameToBeFinished = async id => {
 
   return result;
 };
+
+export const updateGameScore = async (id, hometeam_score, awayteam_score) => {
+  const result = await gameRepository.updateById(id, {
+    hometeam_score,
+    awayteam_score
+  });
+
+  return result;
+};

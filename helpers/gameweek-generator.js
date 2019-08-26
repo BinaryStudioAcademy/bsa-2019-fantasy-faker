@@ -62,7 +62,6 @@ class gameweekGenerator {
 
     await Promise.all(
       games.map(async game => {
-        console.log('game: ', game);
         const { id, hometeam_id, awayteam_id, started, finished } = game;
         this.gameId = id;
 
