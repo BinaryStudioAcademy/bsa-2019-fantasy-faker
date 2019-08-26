@@ -1,11 +1,10 @@
-import {
-  EventModel,
-  PlayerStatModel,
-  GameModel,
-  PlayerMatchStatModel
-} from '../data/models/index';
+import * as playerMatchStatService from '../api/services/playerMatchStat.service';
+import * as eventService from '../api/services/event.service';
+import * as gameService from '../api/services/game.service';
 
-const events = [
+const GAME_EVENTS_COUNT = 35;
+
+const EVENTS = [
   'goal',
   'assist',
   'missed_pass',
@@ -15,35 +14,56 @@ const events = [
   'red_card'
 ];
 
-function delay() {
-  return new Promise(resolve => setTimeout(resolve, 5000));
-}
+const PLAYER_STATS = {
+  goal: 'goals',
+  assist: 'assists',
+  missed_pass: 'missed_passes',
+  goal_conceded: 'goals_conceded',
+  save: 'saves',
+  yellow_card: 'yellow_cards',
+  red_card: 'red_cards'
+};
 
 const randomIndex = length => Math.floor(Math.random() * length);
 
-export default async function generateEvents(socket) {
+export default async function generateEvents(game, hometeam, awayteam) {
+  console.log('awayteam: ', awayteam);
+  console.log('hometeam: ', hometeam);
   try {
-    // const team1 = await PlayerStatModel.findAll({ limit: 11 });
-    // const team2 = await PlayerStatModel.findAll({ offset: 11, limit: 11 });
-    // const players = [...team1, ...team2];
-    const matchStats = await PlayerMatchStatModel.findAll();
-    const game = await GameModel.findOne();
+    const players = [...hometeam, ...awayteam];
+    let hometeamScore = 0;
+    let awayteamScore = 0;
 
-    // let randomPlayer = players[randomIndex(players.length)].id;
+    for (let i = 0; i < GAME_EVENTS_COUNT; i++) {
+      const randomEvent = EVENTS[randomIndex(EVENTS.length)];
+      const randomPlayer = players[randomIndex(players.length)];
 
-    for (let i = 0; i < 35; i++) {
-      let randomEvent = events[randomIndex(events.length)];
-      let randomMatchStats = matchStats[randomIndex(matchStats.length)].id;
+      // TODO add checking events connected with score
+      const isGoalkeeperEvent =
+        randomEvent === 'save' || randomEvent === 'goal_conceded';
+      if (
+        (randomPlayer.position === '1' && isGoalkeeperEvent) ||
+        (randomPlayer.position !== '1' && !isGoalkeeperEvent)
+      ) {
+        await eventService.createEvent(randomEvent, randomPlayer.id, game.id);
 
-      const recordToCreate = {
-        event_type: randomEvent,
-        player_id: randomMatchStats,
-        game_id: game.id
-      };
-      await delay();
-      const createdRecord = await EventModel.create(recordToCreate);
-      socket.emit('someEvent', { createdRecord });
+        await playerMatchStatService.updatePlayer(
+          randomPlayer.id,
+          game.id,
+          PLAYER_STATS[randomEvent]
+        );
+
+        if (randomEvent === 'goal') {
+          if (hometeam.some(item => item.id === randomPlayer.id)) {
+            hometeamScore++
+          } else {
+            awayteamScore++
+          }
+        }
+      }
     }
+
+    await gameService.updateGameScore(game.id, hometeamScore, awayteamScore);
   } catch (err) {
     console.log(err);
   }
