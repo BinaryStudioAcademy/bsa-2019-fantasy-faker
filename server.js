@@ -20,7 +20,7 @@ const io = socketIO(socketServer);
 
 sequelize
   .authenticate()
-  .then((socket) => {
+  .then(() => {
     console.log("Connection has been established successfully.");
   })
   .catch(err => {

@@ -1,15 +1,15 @@
 import eventGenerator from "../helpers/event-generator";
-import gameweekGenerator from '../helpers/gameweek-generator.js';
 
 export default socket => {
   console.log("Socket connection established");
-  gameweekGenerator.setEvents(socket);
 
+  socket.emit("status", eventGenerator.checkStatus());
   // delete next block after test
+
   // const props = {
-  // homeClubId: 2,
-  // awayClubId: 3,
-  // timeout: 10
+  //   homeClubId: 2,
+  //   awayClubId: 3,
+  //   timeout: 3
   // };
   // eventGenerator.initGame(props, socket);
 
@@ -24,7 +24,7 @@ export default socket => {
     eventGenerator.initGame(props, socket);
   });
 
-  socket.on("stop-simulation", () => {
+  socket.on("stopSimulation", () => {
     console.log("stop simulation request");
     eventGenerator.stopGame();
   });
