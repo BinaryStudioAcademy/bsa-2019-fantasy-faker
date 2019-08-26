@@ -40,13 +40,13 @@ export default async function generateEvents(game, hometeam, awayteam) {
         (randomPlayer.position === '1' && isGoalkeeperEvent) ||
         (randomPlayer.position !== '1' && !isGoalkeeperEvent)
       ) {
+        await eventService.createEvent(randomEvent, randomPlayer.id, game.id);
+
         await playerMatchStatService.updatePlayer(
           randomPlayer.id,
           game.id,
           PLAYER_STATS[randomEvent]
         );
- 
-        await eventService.createEvent(randomEvent, randomPlayer.id, game.id);
       }
     }
   } catch (err) {

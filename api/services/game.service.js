@@ -12,9 +12,9 @@ export const getByGameweekId = async id => {
 export const updateGameToBeFinished = async id => {
   const result = await gameRepository.updateById(id, {
     started: true,
-    finished: true
+    finished: true,
+    minutes: 90
   });
 
   return result;
 };
-

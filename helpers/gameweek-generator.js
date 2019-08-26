@@ -50,32 +50,39 @@ class gameweekGenerator {
     this.gameweeks = await this.getPreviousGameweeks();
     this.teams = await this.getTeams();
 
-    this.gameweeks.map(async gameweek => await this.updateGames(gameweek));
+    await Promise.all(
+      this.gameweeks.map(async gameweek => await this.updateGames(gameweek))
+    ); 
+
+    return this.endGenerating();
   }
 
   async updateGames(gameweek) {
     const games = await gameService.getByGameweekId(gameweek.number);
 
-    games.map(async game => {
-      const { id, hometeam_id, awayteam_id, started, finished } = game;
-      this.gameId = id;
+    await Promise.all(
+      games.map(async game => {
+        console.log('game: ', game);
+        const { id, hometeam_id, awayteam_id, started, finished } = game;
+        this.gameId = id;
 
-      const isAnyEvent = await this.checkEvents(id);
-      // TODO check if events and player_match_stats already exist
-      if (!isAnyEvent) {
-        this.homePlayers = await this.getPlayers(hometeam_id);
-        this.awayPlayers = await this.getPlayers(awayteam_id);
+        const isAnyEvent = await this.checkEvents(id);
+        // TODO check if events and player_match_stats already exist
+        if (!isAnyEvent) {
+          this.homePlayers = await this.getPlayers(hometeam_id);
+          this.awayPlayers = await this.getPlayers(awayteam_id);
 
-        await this.generatePlayersStats(this.homePlayers, game.id);
-        await this.generatePlayersStats(this.awayPlayers, game.id);
+          await this.generatePlayersStats(this.homePlayers, game.id);
+          await this.generatePlayersStats(this.awayPlayers, game.id);
 
-        generateEvents(game, this.homePlayers, this.awayPlayers);
-      }
+          await generateEvents(game, this.homePlayers, this.awayPlayers);
+        }
 
-      if (!started || !finished) {
-        await gameService.updateGameToBeFinished(id);
-      }
-    });
+        if (!started || !finished) {
+          await gameService.updateGameToBeFinished(id);
+        }
+      })
+    );
   }
 
   async checkEvents(game_id) {
@@ -91,18 +98,20 @@ class gameweekGenerator {
     console.log('fullfilled');
   }
 
-  generatePlayersStats(players, game_id) {
-    return players.map(async player => {
-      try {
-        const result = await playerMatchStatServices.createPlayer(
-          player.id,
-          game_id
-        );
-        return result;
-      } catch (err) {
-        console.log(err);
-      }
-    });
+  async generatePlayersStats(players, game_id) {
+    return await Promise.all(
+      players.map(async player => {
+        try {
+          const result = await playerMatchStatServices.createPlayer(
+            player.id,
+            game_id
+          );
+          return result;
+        } catch (err) {
+          console.log(err);
+        }
+      })
+    );
   }
 }
 
