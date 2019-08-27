@@ -45,6 +45,11 @@ class eventGenerator {
   }
 
   async initGame(data, socket) {
+    this.score = [0, 0];
+    this.timestamps = {};
+    this.timesCount = 0;
+    this.possibleNextEvent = undefined;
+
     this.gameStarted = true;
     this.setTimestamp("initGame");
 
