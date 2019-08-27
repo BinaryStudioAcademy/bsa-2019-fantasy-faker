@@ -22,7 +22,7 @@ export default class BaseRepository {
       plain: true
     });
 
-    return result[0];
+    return result;
   }
 
   deleteById(id) {

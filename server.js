@@ -7,6 +7,7 @@ import routes from "./api/routes/index";
 import errorHandlerMiddleware from "./api/middlewares/error-handler.middleware";
 import socketInjector from "./socket/injector";
 import socketHandlers from "./socket/handlers";
+import gameweekGenerator from './helpers/gameweek-generator';
 import generateEvents from "./socket/generateEvents";
 
 import sequelize from "./data/db/connection";
@@ -43,6 +44,7 @@ app.use(errorHandlerMiddleware);
 app.listen(process.env.APP_PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Server listening on port ${process.env.APP_PORT}!`);
+  gameweekGenerator.setEvents();
 });
 
 socketServer.listen(process.env.SOCKET_PORT);
