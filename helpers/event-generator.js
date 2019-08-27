@@ -25,7 +25,6 @@ class eventGenerator {
         } else if (event.team === "away") {
           this.score = [home, away + 1];
         }
-        console.log(this.score);
         return { score: this.score };
       }
     };
@@ -35,7 +34,7 @@ class eventGenerator {
     try {
       const response = await mainApp.get("/players", { params: { club_id } });
       //console.log(response.data);
-      return response.data;
+      return response.data.rows;
     } catch (error) {
       console.error(error);
     }
@@ -49,10 +48,10 @@ class eventGenerator {
     this.gameStarted = true;
     this.setTimestamp("initGame");
 
-    const { homeClubId, awayClubId, timeout } = data;
+    const { homeClub, awayClub, timeout } = data;
     this.socket = socket;
-    this.homeClubId = homeClubId;
-    this.awayClubId = awayClubId;
+    this.homeClubId = homeClub;
+    this.awayClubId = awayClub;
     this.homePlayers = await this.fetchPlayers(this.homeClubId);
     this.awayPlayers = await this.fetchPlayers(this.awayClubId);
     // TODO: parallel requests above
@@ -137,9 +136,10 @@ class eventGenerator {
   }
 
   elapsed(now = Date.now()) {
-    const elapsed = Math.round(
-      ((now - this.timestamps.startTime[1]) / TIME_DURATION) * 45 * 60
-    );
+    const startTime = this.timestamps.startTime
+      ? this.timestamps.startTime[1]
+      : 0;
+    const elapsed = Math.round(((now - startTime) / TIME_DURATION) * 45 * 60);
     return elapsed;
   }
 
