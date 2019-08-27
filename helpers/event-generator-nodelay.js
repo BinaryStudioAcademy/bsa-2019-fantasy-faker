@@ -1,7 +1,7 @@
 import { eventGenerator } from "./event-generator";
-const TIME_DURATION = 150; // in seconds
-const EVENT_INTERVAL = 5; // in seconds
-const TIME_EVENTS_COUNT = TIME_DURATION / EVENT_INTERVAL; // there is two times
+import * as eventService from "./../api/services/event.service";
+
+const TIME_EVENTS_COUNT = 30;
 
 class eventGeneratorNoDelay extends eventGenerator {
   constructor() {
@@ -26,7 +26,7 @@ class eventGeneratorNoDelay extends eventGenerator {
     this.emit({
       name: "startTime",
       update: { time: this.timesCount },
-      elapsed: 0
+      elapsed: this.elapsed()
     });
     let i = 0;
     while (i++ < TIME_EVENTS_COUNT) {
@@ -51,9 +51,12 @@ class eventGeneratorNoDelay extends eventGenerator {
     const { name, team, player, update, elapsed } = data;
     const { first_name, second_name, id, position } = player || {};
 
-    // if (player) {
-    //   eventService.createEvent(name, id, this.gameId);
-    // }
+    eventService.createEvent({
+      event_type: name,
+      player_id: id || null,
+      game_id: this.gameId,
+      time: elapsed
+    });
 
     const event = {
       name,

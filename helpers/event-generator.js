@@ -1,8 +1,8 @@
 import { events, probabilities } from "../config/event-generator.config";
-import { mainApp } from "../helpers/api.helper";
 import * as eventService from "../api/services/event.service";
 import * as playerMatchStatServices from "../api/services/playerMatchStat.service";
 import * as playerStatService from "../api/services/playerStat.service";
+import * as gameService from "../api/services/game.service";
 
 const TIME_DURATION = 150; // in seconds
 const EVENT_INTERVAL = 5; // in seconds
@@ -18,6 +18,7 @@ export class eventGenerator {
     this.score = [0, 0];
     this.possibleNextEvent = undefined;
     this.prevEvent = undefined;
+    this.playerMatchStats = [];
 
     this.eventHandlers = {
       goal: event => {
@@ -28,6 +29,8 @@ export class eventGenerator {
         } else if (event.team === "away") {
           this.score = [home, away + 1];
         }
+
+        gameService.updateGameScore(this.gameId, this.score[0], this.score[1]);
         return { score: this.score };
       }
     };
@@ -51,25 +54,24 @@ export class eventGenerator {
     this.setTimestamp("initGame");
     console.log("init game");
 
-    const { homeClub, awayClub, timeout, id } = data;
+    const { homeClub, awayClub, timeout, id, start } = data;
     this.socket = socket;
     this.homeClubId = homeClub;
     this.awayClubId = awayClub;
     this.gameId = id;
+    this.start = start;
     this.homePlayers = await this.fetchPlayers(this.homeClubId);
     this.awayPlayers = await this.fetchPlayers(this.awayClubId);
     // TODO: parallel requests above
 
     const playersArray = [...this.homePlayers, ...this.awayPlayers];
-    playersArray.map(player => console.log(player.first_name));
 
     // Creates empty player stats in playerMatchStats
     await Promise.all(
       playersArray.map(async player => {
         try {
-          const result = await playerMatchStatServices.createPlayer(
-            player.id,
-            this.gameId
+          this.playerMatchStats.push(
+            await playerMatchStatServices.createPlayer(player.id, this.gameId)
           );
         } catch (err) {
           console.log(err);
@@ -148,6 +150,7 @@ export class eventGenerator {
     this.gameStarted = false;
     this.setTimestamp("endGame");
     this.emit({ name: "endGame", elapsed: this.elapsed() });
+    this.updatePlayerMatchStats();
   }
 
   stopGame() {
@@ -259,7 +262,7 @@ export class eventGenerator {
   }
 
   generateText(data) {
-    let text = `Event '${data.name}' `;
+    let text = `Minute ${data.elapsed / 1000 / 60}, event '${data.name}' `;
     data.player &&
       (text += `from team '${data.team}' by '${data.player &&
         data.player.position}' ${data.player.first_name} ${
@@ -273,9 +276,12 @@ export class eventGenerator {
     const { name, team, player, update, elapsed } = data;
     const { first_name, second_name, id, position } = player || {};
 
-    if (player) {
-      eventService.createEvent(name, id, this.gameId);
-    }
+    eventService.createEvent({
+      event_type: name,
+      player_id: id || null,
+      game_id: this.gameId,
+      time: elapsed
+    });
 
     const event = {
       name,
@@ -289,6 +295,8 @@ export class eventGenerator {
     console.log(event.text);
     this.socket.emit("event", event);
   }
+
+  updatePlayerMatchStats() {}
 }
 
 export default new eventGenerator();

@@ -172,6 +172,10 @@ export default {
                   allowNull: false,
                   type: Sequelize.STRING
                 },
+                time: {
+                  allowNull: true,
+                  type: Sequelize.INTEGER
+                },
                 createdAt: Sequelize.DATE,
                 updatedAt: Sequelize.DATE
               },
