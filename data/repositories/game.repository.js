@@ -1,16 +1,30 @@
-import { GameModel } from '../models/index';
-import BaseRepository from './base.repository';
+import { Op } from "sequelize";
 
-class EventRepository extends BaseRepository {
-    getById(id) {
-        return this.model.findOne({ where: { id } });
-    }
+import { GameModel } from "../models/index";
+import BaseRepository from "./base.repository";
 
-    getByGameweekId(gameweek_id) {
-        return this.model.findAll({
-            where: { gameweek_id }
-        })
-    }
+class GameRepository extends BaseRepository {
+  getById(id) {
+    return this.model.findOne({ where: { id } });
+  }
+
+  getByGameweekId(gameweek_id) {
+    return this.model.findAll({
+      where: { gameweek_id }
+    });
+  }
+
+  getNext() {
+    const now = new Date();
+    return this.model.findOne({
+      where: {
+        start: {
+          [Op.gte]: now
+        }
+      },
+      order: [["start", "ASC"]]
+    });
+  }
 }
 
-export default new EventRepository(GameModel);
+export default new GameRepository(GameModel);

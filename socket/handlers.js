@@ -2,7 +2,6 @@ import eventGenerator from "../helpers/event-generator";
 
 export default socket => {
   console.log("Socket connection established");
-
   socket.emit("status", eventGenerator.checkStatus());
   // delete next block after test
 

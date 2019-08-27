@@ -7,8 +7,8 @@ import routes from "./api/routes/index";
 import errorHandlerMiddleware from "./api/middlewares/error-handler.middleware";
 import socketInjector from "./socket/injector";
 import socketHandlers from "./socket/handlers";
-import gameweekGenerator from './helpers/gameweek-generator';
-import generateEvents from "./socket/generateEvents";
+import gameweekGenerator from "./helpers/gameweek-generator";
+import initSchedulers from "./schedulers";
 
 import sequelize from "./data/db/connection";
 
@@ -22,6 +22,7 @@ sequelize
   .authenticate()
   .then(() => {
     console.log("Connection has been established successfully.");
+    initSchedulers(io);
   })
   .catch(err => {
     console.error("Unable to connect to the database:", err);

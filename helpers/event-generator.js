@@ -1,11 +1,14 @@
 import { events, probabilities } from "../config/event-generator.config";
 import { mainApp } from "../helpers/api.helper";
+import * as eventService from "../api/services/event.service";
+import * as playerMatchStatServices from "../api/services/playerMatchStat.service";
+import * as playerStatService from "../api/services/playerStat.service";
 
 const TIME_DURATION = 150; // in seconds
 const EVENT_INTERVAL = 5; // in seconds
 const GAME_EVENTS_COUNT = (TIME_DURATION / EVENT_INTERVAL) * 2; // there is two times
 
-class eventGenerator {
+export class eventGenerator {
   constructor() {
     this.timesCount;
     this.timeouts = {};
@@ -31,13 +34,7 @@ class eventGenerator {
   }
 
   async fetchPlayers(club_id) {
-    try {
-      const response = await mainApp.get("/players", { params: { club_id } });
-      //console.log(response.data);
-      return response.data.rows;
-    } catch (error) {
-      console.error(error);
-    }
+    return playerStatService.getAllPlayerStatsByClubId(club_id);
   }
 
   checkStatus() {
@@ -52,21 +49,43 @@ class eventGenerator {
 
     this.gameStarted = true;
     this.setTimestamp("initGame");
+    console.log("init game");
 
-    const { homeClub, awayClub, timeout } = data;
+    const { homeClub, awayClub, timeout, id } = data;
     this.socket = socket;
     this.homeClubId = homeClub;
     this.awayClubId = awayClub;
+    this.gameId = id;
     this.homePlayers = await this.fetchPlayers(this.homeClubId);
     this.awayPlayers = await this.fetchPlayers(this.awayClubId);
     // TODO: parallel requests above
 
-    this.eventCycle = this.eventCycleGenerator();
+    const playersArray = [...this.homePlayers, ...this.awayPlayers];
+    playersArray.map(player => console.log(player.first_name));
 
-    this.timeouts.startGame = setTimeout(
-      () => this.startGame(),
-      timeout * 1000
+    // Creates empty player stats in playerMatchStats
+    await Promise.all(
+      playersArray.map(async player => {
+        try {
+          const result = await playerMatchStatServices.createPlayer(
+            player.id,
+            this.gameId
+          );
+        } catch (err) {
+          console.log(err);
+        }
+      })
     );
+
+    this.eventCycle = this.eventCycleGenerator();
+    if (timeout) {
+      this.timeouts.startGame = setTimeout(
+        () => this.startGame(),
+        timeout * 1000
+      );
+    } else {
+      this.startGame();
+    }
   }
 
   setTimestamp(name, index = undefined) {
@@ -128,6 +147,7 @@ class eventGenerator {
   endGame() {
     this.gameStarted = false;
     this.setTimestamp("endGame");
+    this.emit({ name: "endGame", elapsed: this.elapsed() });
   }
 
   stopGame() {
@@ -249,8 +269,13 @@ class eventGenerator {
   }
 
   emit(data) {
+    console.log(data);
     const { name, team, player, update, elapsed } = data;
     const { first_name, second_name, id, position } = player || {};
+
+    if (player) {
+      eventService.createEvent(name, id, this.gameId);
+    }
 
     const event = {
       name,

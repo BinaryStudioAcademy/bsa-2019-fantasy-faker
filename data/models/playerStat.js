@@ -1,6 +1,6 @@
 export default (orm, DataTypes) => {
   const PlayerStat = orm.define(
-    'player_stat',
+    "player_stat",
     {
       first_name: {
         allowNull: false,
@@ -20,7 +20,7 @@ export default (orm, DataTypes) => {
       },
       position: {
         allowNull: false,
-        type: DataTypes.ENUM('1', '2', '3', '4')
+        type: DataTypes.ENUM("GKP", "DEF", "MID", "FWD")
       },
       goals: {
         allowNull: false,
