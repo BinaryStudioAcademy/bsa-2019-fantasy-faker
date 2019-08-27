@@ -1,22 +1,3 @@
-// Event probability is probability of an event during a match
-// For example if probability of a goal is 2, then it is highly
-// expected two goals to be scored during one match. Field without
-// probability considered default event, or just takes all of the
-// rest of probabilities
-
-// Field 'subject' is probabilities of player on particular position
-// to cause an event. It relates to only one event (not whole match),
-// so it has to be normalized to 1 (summ of all probabilities must be
-// equal 1)
-
-// Field after - it is an array of events that could happen after
-// particular event.
-
-// Field direction - "same-player" | "same-team" | "other-team" - who is
-// the subject of next event
-
-// Field inherit -- to be implemented - inherits 'after' properties of other events
-
 export const probabilities = {
   game: {
     attack: 30,
