@@ -66,6 +66,7 @@ class eventGeneratorNoDelay extends eventGenerator {
       text: this.generateText(data),
       ...update
     };
+    this.eventsLog.push(event);
 
     console.log(event.text);
   }

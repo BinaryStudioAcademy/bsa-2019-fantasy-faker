@@ -7,7 +7,7 @@ import eventGeneratorNoDelay from "./../helpers/event-generator-nodelay";
 
 const gameScheduler = async io => {
   const nextGame = await gameRepository.getNext();
-  const date = moment().add(10, "seconds");
+  const date = moment().add(5, "seconds");
 
   schedule.scheduleJob(
     "next-game",

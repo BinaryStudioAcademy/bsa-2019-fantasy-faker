@@ -19,6 +19,7 @@ export class eventGenerator {
     this.possibleNextEvent = undefined;
     this.prevEvent = undefined;
     this.playerMatchStats = [];
+    this.eventsLog = [];
 
     this.eventHandlers = {
       goal: event => {
@@ -70,9 +71,12 @@ export class eventGenerator {
     await Promise.all(
       playersArray.map(async player => {
         try {
-          this.playerMatchStats.push(
-            await playerMatchStatServices.createPlayer(player.id, this.gameId)
+          const data = await playerMatchStatServices.createPlayer(
+            player.id,
+            this.gameId
           );
+
+          this.playerMatchStats.push(data.get({ plain: true }));
         } catch (err) {
           console.log(err);
         }
@@ -272,7 +276,6 @@ export class eventGenerator {
   }
 
   emit(data) {
-    console.log(data);
     const { name, team, player, update, elapsed } = data;
     const { first_name, second_name, id, position } = player || {};
 
@@ -291,12 +294,57 @@ export class eventGenerator {
       text: this.generateText(data),
       ...update
     };
+    this.eventsLog.push(event);
 
     console.log(event.text);
     this.socket.emit("event", event);
   }
 
-  updatePlayerMatchStats() {}
+  async updatePlayerMatchStats() {
+    console.log(this.score);
+    this.playerMatchStats.map(async player => {
+      const goals = this.eventsLog.filter(
+        event =>
+          event.name === "goal" &&
+          event.player &&
+          event.player.id === player.player_id
+      ).length;
+      const assists = 0; // to write later
+      const missed_passes = 0; // to write later
+      const isHomePlayer = this.homePlayers.find(
+        item => item.id === player.player_id
+      );
+      const goals_conceded = isHomePlayer ? this.score[1] : this.score[0];
+      const saves = this.eventsLog.filter(
+        event =>
+          event.name === "save" &&
+          event.player &&
+          event.player.id === player.player_id
+      ).length;
+      const yellow_cards = this.eventsLog.filter(
+        event =>
+          event.name === "yellowCard" &&
+          event.player &&
+          event.player.id === player.player_id
+      ).length;
+      const red_cards = 0; // to write later
+      const data = {
+        id: player.id,
+        goals,
+        assists,
+        missed_passes,
+        goals_conceded,
+        saves,
+        yellow_cards,
+        red_cards
+      };
+      try {
+        const resp = await playerMatchStatServices.update(data);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  }
 }
 
 export default new eventGenerator();

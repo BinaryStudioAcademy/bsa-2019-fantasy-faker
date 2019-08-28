@@ -31,7 +31,8 @@ export const probabilities = {
     interception: 0.3
   },
   afterFoul: {
-    freeKick: 0.6,
+    freeKick: 0.4,
+    trauma: 0.2,
     penaltyKick: 0.2,
     yellowCard: 0.2
   },
@@ -43,6 +44,10 @@ export const probabilities = {
     goal: 0.55,
     miss: 0.2,
     save: 0.25
+  },
+  afterTrauma: {
+    yellowCard: 0.8,
+    freeKick: 0.2
   }
 };
 
@@ -152,7 +157,6 @@ export const events = {
       GKP: 0
     }
   },
-
   out: {
     name: "out",
     subject: {
@@ -161,6 +165,22 @@ export const events = {
       DEF: 0.4,
       GKP: 0.2
     }
+  },
+  trauma: {
+    name: "trauma",
+    direction: "otherTeam",
+    subject: {
+      FWD: 0.4,
+      MID: 0.3,
+      DEF: 0.2,
+      GKP: 0.1
+    },
+    after: "afterTrauma"
+  },
+
+  redCard: {
+    name: "redCard",
+    direction: "samePlayer"
   },
 
   nothing: {

@@ -30,6 +30,11 @@ export const updatePlayer = async (player_id, game_id, event) => {
   return result;
 };
 
+export const update = async playerMatchStats => {
+  const { id, ...data } = playerMatchStats;
+  return await playerMatchStatRepository.updateById(id, data);
+};
+
 export const getPlayerMatchStatsByGame = async (player_id, game_id) => {
   const result = await playerMatchStatRepository.getPlayerMatchStatsByGame(
     player_id,
