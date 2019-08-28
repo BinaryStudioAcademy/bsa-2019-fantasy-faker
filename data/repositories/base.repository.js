@@ -1,3 +1,6 @@
+import moment from "moment";
+import { Op } from "sequelize";
+
 export default class BaseRepository {
   constructor(model) {
     this.model = model;
@@ -9,6 +12,16 @@ export default class BaseRepository {
 
   getById(id) {
     return this.model.findByPk(id);
+  }
+
+  getAfter(timestamp) {
+    if (timestamp === undefined) {
+      return this.model.findAll();
+    } else {
+      return this.model.findAll({
+        where: { updatedAt: { [Op.gte]: timestamp } }
+      });
+    }
   }
 
   create(data) {

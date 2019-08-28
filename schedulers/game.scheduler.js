@@ -11,7 +11,7 @@ const gameScheduler = async io => {
 
   schedule.scheduleJob(
     "next-game",
-    date.format() /*nextGame.start*/,
+    /*date.format()*/ nextGame.start,
     async fireDate => {
       console.log(`>>> Game time! ${fireDate}`);
       const { hometeam_id, awayteam_id, id } = nextGame;

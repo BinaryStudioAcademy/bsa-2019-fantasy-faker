@@ -10,6 +10,10 @@ export const getEventsByGameId = async game_id => {
   return response;
 };
 
+export const getEventsAfter = async timestamp => {
+  return await eventRepository.getAfter(timestamp);
+};
+
 export const createEvent = async ({ event_type, player_id, game_id, time }) => {
   const { id } = (await playerMatchStatRepository.getPlayerMatchStatsByGame(
     player_id,
