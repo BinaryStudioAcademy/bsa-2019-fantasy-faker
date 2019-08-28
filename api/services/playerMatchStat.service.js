@@ -12,7 +12,8 @@ export const getPlayerByMatchStatId = async (id) => {
 };
 
 export const getPlayerMatchStatsAfter = async (timestamp) => {
-  const result = playerMatchStatRepository.getAfter(timestamp);
+  const result = await playerMatchStatRepository.getAfter(timestamp);
+  return result;
 }
 
 export const createPlayer = (player_id, game_id) => {

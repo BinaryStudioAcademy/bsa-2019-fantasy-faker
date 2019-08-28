@@ -13,7 +13,8 @@ export const getAllPlayerStatsByClubId = async club_id => {
 };
 
 export const getPlayerStatsAfter = async (timestamp) => {
-  const result = playerStatRepository.getAfter(timestamp);
+  const result = await playerStatRepository.getAfter(timestamp);
+  return result;
 }
 
 export const updatePlayerStats = async (id, data) => {
