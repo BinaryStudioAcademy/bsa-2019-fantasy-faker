@@ -19,7 +19,7 @@ export default class BaseRepository {
       return this.model.findAll();
     } else {
       return this.model.findAll({
-        where: { updatedAt: { [Op.gte]: timestamp } }
+        where: { updatedAt: { [Op.gt]: timestamp } }
       });
     }
   }
