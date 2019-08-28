@@ -28,7 +28,7 @@ deploy:
   key: latest-faker.zip
   bundle_type: zip
   application: FantasyFootball
-  deployment_group: deployment-group-name
+  deployment_group: faker-deployment-group-name
   region: us-east-2
   on: *2
 
