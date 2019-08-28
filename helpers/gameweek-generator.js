@@ -2,10 +2,9 @@ import * as gameweekService from '../api/services/gameweek.service';
 import * as footballClubService from '../api/services/footballClub.service';
 import * as gameService from '../api/services/game.service';
 import * as eventService from '../api/services/event.service';
-import * as playerMatchStatServices from '../api/services/playerMatchStat.service';
 import * as playerStatService from '../api/services/playerStat.service.js';
 
-import generateEvents from '../socket/generateEvents.js';
+import eventGeneratorNoDelay from "./../helpers/event-generator-nodelay";
 
 class gameweekGenerator {
   constructor() {
@@ -53,7 +52,7 @@ class gameweekGenerator {
     await Promise.all(
       this.gameweeks.map(async gameweek => await this.updateGames(gameweek))
     ); 
-
+    
     return this.endGenerating();
   }
 
@@ -64,17 +63,13 @@ class gameweekGenerator {
       games.map(async game => {
         const { id, hometeam_id, awayteam_id, started, finished } = game;
         this.gameId = id;
-
         const isAnyEvent = await this.checkEvents(id);
-        // TODO check if events and player_match_stats already exist
         if (!isAnyEvent) {
-          this.homePlayers = await this.getPlayers(hometeam_id);
-          this.awayPlayers = await this.getPlayers(awayteam_id);
+          const eGenerator = new eventGeneratorNoDelay();
 
-          await this.generatePlayersStats(this.homePlayers, game.id);
-          await this.generatePlayersStats(this.awayPlayers, game.id);
-
-          await generateEvents(game, this.homePlayers, this.awayPlayers);
+          await eGenerator.initGame(
+            { homeClub: hometeam_id, awayClub: awayteam_id, id }
+          );
         }
 
         if (!started || !finished) {
@@ -82,6 +77,7 @@ class gameweekGenerator {
         }
       })
     );
+
   }
 
   async checkEvents(game_id) {
@@ -95,22 +91,6 @@ class gameweekGenerator {
 
   endGenerating() {
     console.log('fullfilled');
-  }
-
-  async generatePlayersStats(players, game_id) {
-    return await Promise.all(
-      players.map(async player => {
-        try {
-          const result = await playerMatchStatServices.createPlayer(
-            player.id,
-            game_id
-          );
-          return result;
-        } catch (err) {
-          console.log(err);
-        }
-      })
-    );
   }
 }
 

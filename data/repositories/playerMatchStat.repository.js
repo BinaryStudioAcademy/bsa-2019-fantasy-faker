@@ -17,6 +17,10 @@ class EventRepository extends BaseRepository {
       where: { player_id, game_id }
     });
   }
+
+  getPlayerById(id) {
+    return this.model.findOne({ where: { id }, include: ['player'] });
+  }
 }
 
 export default new EventRepository(PlayerMatchStatModel);

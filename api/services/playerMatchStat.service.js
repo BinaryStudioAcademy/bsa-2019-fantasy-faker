@@ -6,6 +6,11 @@ export const getAllPlayerMatchStat = async () =>
 export const getPlayerMatchStatById = async id =>
   await playerMatchStatRepository.getById(id);
 
+export const getPlayerByMatchStatId = async (id) => {
+  const result = await playerMatchStatRepository.getPlayerById(id);
+  return result;
+} 
+
 export const createPlayer = (player_id, game_id) => {
   return playerMatchStatRepository.create({
     player_id,
@@ -18,16 +23,6 @@ export const createPlayer = (player_id, game_id) => {
     yellow_cards: 0,
     red_cards: 0
   });
-};
-
-export const updatePlayer = async (player_id, game_id, event) => {
-  const result = await playerMatchStatRepository.getPlayerMatchStatsByGame(
-    player_id,
-    game_id
-  );
-  await result.increment([event], { by: 1 });
-
-  return result;
 };
 
 export const update = async playerMatchStats => {

@@ -4,6 +4,8 @@ import * as playerMatchStatServices from "../api/services/playerMatchStat.servic
 import * as playerStatService from "../api/services/playerStat.service";
 import * as gameService from "../api/services/game.service";
 
+import updatePlayerStats from './update-player-stats.js';
+
 const TIME_DURATION = 150; // in seconds
 const EVENT_INTERVAL = 5; // in seconds
 const GAME_EVENTS_COUNT = (TIME_DURATION / EVENT_INTERVAL) * 2; // there is two times
@@ -340,6 +342,7 @@ export class eventGenerator {
       };
       try {
         const resp = await playerMatchStatServices.update(data);
+        await updatePlayerStats(data);
       } catch (err) {
         console.log(err);
       }
