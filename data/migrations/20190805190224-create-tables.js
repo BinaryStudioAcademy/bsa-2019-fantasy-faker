@@ -110,6 +110,7 @@ export default {
                   allowNull: false,
                   type: Sequelize.INTEGER
                 },
+                injury: Sequelize.DATE,
                 createdAt: Sequelize.DATE,
                 updatedAt: Sequelize.DATE
               },
@@ -153,6 +154,7 @@ export default {
                   allowNull: false,
                   type: Sequelize.INTEGER
                 },
+                injury: Sequelize.DATE,
                 createdAt: Sequelize.DATE,
                 updatedAt: Sequelize.DATE
               },
