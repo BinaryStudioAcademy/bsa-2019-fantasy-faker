@@ -4,7 +4,7 @@ import * as playerMatchStatServices from "../api/services/playerMatchStat.servic
 import * as playerStatService from "../api/services/playerStat.service";
 import * as gameService from "../api/services/game.service";
 
-import updatePlayerStats from './update-player-stats.js';
+import updatePlayerStats from "./update-player-stats.js";
 
 const TIME_DURATION = 150; // in seconds
 const EVENT_INTERVAL = 5; // in seconds
@@ -330,6 +330,7 @@ export class eventGenerator {
           event.player.id === player.player_id
       ).length;
       const red_cards = 0; // to write later
+      const injury = new Date();
       const data = {
         id: player.id,
         goals,
@@ -338,7 +339,8 @@ export class eventGenerator {
         goals_conceded,
         saves,
         yellow_cards,
-        red_cards
+        red_cards,
+        injury
       };
       try {
         const resp = await playerMatchStatServices.update(data);
