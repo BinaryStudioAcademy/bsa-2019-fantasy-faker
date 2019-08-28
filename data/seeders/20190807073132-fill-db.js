@@ -1,7 +1,5 @@
 import playersSeed from '../seed-data/playerStats.seed';
 import footballClubsSeed from '../seed-data/footballClubs.seed';
-import playerMatchSeed from '../seed-data/playerMatchStats.seed';
-import eventsSeed from '../seed-data/events.seed';
 import gamesSeed from '../seed-data/games.seed';
 import gameweeksSeed from '../seed-data/gameweeks.seed';
 import gameweekHistoriesSeed from '../seed-data/gameweekHistories.seed';
@@ -55,26 +53,6 @@ export default {
         'SELECT id FROM "games" WHERE finished;',
         options,
       );
-
-      const playerMatchMappedSeed = playerMatchSeed.map((match) => ({
-        ...match,
-        player_id: playerStats[randomIndex(playerStats.length)].id,
-        game_id: games[randomIndex(games.length)].id
-      }));
-
-      await queryInterface.bulkInsert('player_match_stats', playerMatchMappedSeed, {});
-      const playerMatchStats = await queryInterface.sequelize.query(
-        'SELECT id FROM "player_match_stats";',
-        options
-      );
-
-      const eventMappedSeeds = eventsSeed.map((event) => ({
-        ...event,
-        player_match_stat_id: playerMatchStats[randomIndex(playerMatchStats.length)].id,
-        game_id: games[randomIndex(games.length)].id,
-      }));
-
-      await queryInterface.bulkInsert('events', eventMappedSeeds, {});
 
       const gameweekHistoryMappedSeeds = gameweekHistoriesSeed.map(history => ({
         ...history,
