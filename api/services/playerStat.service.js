@@ -12,6 +12,10 @@ export const getAllPlayerStatsByClubId = async club_id => {
 	return response.map(r => r.toJSON());
 };
 
+export const getPlayerStatsAfter = async (timestamp) => {
+  const result = playerStatRepository.getAfter(timestamp);
+}
+
 export const updatePlayerStats = async (id, data) => {
 	const player = await playerStatRepository.getById(id);
 

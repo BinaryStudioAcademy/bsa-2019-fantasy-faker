@@ -9,7 +9,11 @@ export const getPlayerMatchStatById = async id =>
 export const getPlayerByMatchStatId = async (id) => {
   const result = await playerMatchStatRepository.getPlayerById(id);
   return result;
-} 
+};
+
+export const getPlayerMatchStatsAfter = async (timestamp) => {
+  const result = playerMatchStatRepository.getAfter(timestamp);
+}
 
 export const createPlayer = (player_id, game_id) => {
   return playerMatchStatRepository.create({
