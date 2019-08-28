@@ -4,7 +4,7 @@ os: linux
 
 files:
   - source: /
-    destination: /home/ubuntu/bsa-2019-fantasy
+    destination: /home/ubuntu/bsa-2019-fantasy-faker
 
 permissions:
   - object: /
