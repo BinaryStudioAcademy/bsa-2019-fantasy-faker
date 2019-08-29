@@ -13,6 +13,7 @@ before_install:
 install:
   - mkdir ./server
   - mv !(server) server
+  - cp ./server/appspec.yml ./appspec.yml
 
 
 deploy:
