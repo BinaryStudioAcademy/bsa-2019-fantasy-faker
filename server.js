@@ -42,10 +42,12 @@ app.get("/", function(req, res) {
 });
 
 app.use(errorHandlerMiddleware);
-app.listen(process.env.APP_PORT, () => {
+app.listen(process.env.APP_PORT, async () => {
   // eslint-disable-next-line no-console
   console.log(`Server listening on port ${process.env.APP_PORT}!`);
-  gameweekGenerator.setEvents();
+  await gameweekGenerator.setEvents();
+  console.log("Sending update socket event");
+  io.emit("update");
 });
 
 socketServer.listen(process.env.SOCKET_PORT);

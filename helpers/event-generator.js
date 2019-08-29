@@ -5,6 +5,7 @@ import * as playerStatService from "../api/services/playerStat.service";
 import * as gameService from "../api/services/game.service";
 
 import updatePlayerStats from "./update-player-stats.js";
+import { throws } from "assert";
 
 const TIME_DURATION = 150; // in seconds
 const EVENT_INTERVAL = 5; // in seconds
@@ -152,11 +153,12 @@ export class eventGenerator {
     );
   }
 
-  endGame() {
+  async endGame() {
     this.gameStarted = false;
     this.setTimestamp("endGame");
     this.emit({ name: "endGame", elapsed: this.elapsed() });
-    this.updatePlayerMatchStats();
+    await this.updatePlayerMatchStats();
+    this.socket.emit("update");
   }
 
   stopGame() {
