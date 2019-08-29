@@ -34,7 +34,12 @@ export class eventGenerator {
           this.score = [home, away + 1];
         }
 
-        gameService.updateGameScore(this.gameId, this.score[0], this.score[1]);
+        this.isSimulation ||
+          gameService.updateGameScore(
+            this.gameId,
+            this.score[0],
+            this.score[1]
+          );
         return { score: this.score };
       }
     };
@@ -58,8 +63,16 @@ export class eventGenerator {
     this.setTimestamp("initGame");
     console.log("init game");
 
-    const { homeClub, awayClub, timeout, id, start } = data;
+    const {
+      homeClub,
+      awayClub,
+      timeout,
+      id,
+      start,
+      isSimulation = false
+    } = data;
     this.socket = socket;
+    this.isSimulation = isSimulation;
     this.homeClubId = homeClub;
     this.awayClubId = awayClub;
     this.gameId = id;
@@ -158,7 +171,9 @@ export class eventGenerator {
     this.setTimestamp("endGame");
     this.emit({ name: "endGame", elapsed: this.elapsed() });
     await this.updatePlayerMatchStats();
-    this.socket.emit("update");
+    if (this.socket) {
+      this.socket.emit("update");
+    }
   }
 
   stopGame() {
@@ -283,12 +298,14 @@ export class eventGenerator {
     const { name, team, player, update, elapsed = 0 } = data;
     const { first_name, second_name, id, position } = player || {};
 
-    eventService.createEvent({
-      event_type: name,
-      player_id: id || null,
-      game_id: this.gameId,
-      time: elapsed
-    });
+    if (!this.isSimulation) {
+      eventService.createEvent({
+        event_type: name,
+        player_id: id || null,
+        game_id: this.gameId,
+        time: elapsed
+      });
+    }
 
     const event = {
       name,
@@ -301,11 +318,12 @@ export class eventGenerator {
     this.eventsLog.push(event);
 
     console.log(event.text);
-    this.socket.emit("event", event);
+    if (this.socket) this.socket.emit("event", event);
   }
 
   async updatePlayerMatchStats() {
     console.log(this.score);
+    if (this.isSimulation) return true;
     this.playerMatchStats.map(async player => {
       const goals = this.eventsLog.filter(
         event =>

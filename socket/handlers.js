@@ -20,7 +20,7 @@ export default socket => {
   });
   socket.on("simulate", props => {
     console.log("simulate request");
-    eventGenerator.initGame(props, socket);
+    eventGenerator.initGame({ ...props, isSimulation: true }, socket);
   });
 
   socket.on("stopSimulation", () => {
