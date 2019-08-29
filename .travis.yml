@@ -30,7 +30,7 @@ deploy:
   bucket: bsa-2019-s3-bucket
   key: latest-faker.zip
   bundle_type: zip
-  application: FantasyFootball
+  application: FantasyFootballFaker
   deployment_group: faker-deployment-group-name
   region: us-east-2
   on: *2
