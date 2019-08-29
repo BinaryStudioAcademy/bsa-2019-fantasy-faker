@@ -10,9 +10,6 @@ branches:
 before_install:
   - pip install --user awscli
 
-install:
-  - npm install
-
 deploy:
 - provider: s3
   access_key_id: $AWS_ACCESS_KEY
