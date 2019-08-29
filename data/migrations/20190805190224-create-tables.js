@@ -175,7 +175,7 @@ export default {
                   type: Sequelize.STRING
                 },
                 time: {
-                  allowNull: true,
+                  allowNull: false,
                   type: Sequelize.INTEGER
                 },
                 createdAt: Sequelize.DATE,

@@ -7,7 +7,7 @@ export default (orm, DataTypes) => {
         type: DataTypes.STRING
       },
       time: {
-        allowNull: true,
+        allowNull: false,
         type: DataTypes.INTEGER
       },
       createdAt: DataTypes.DATE,

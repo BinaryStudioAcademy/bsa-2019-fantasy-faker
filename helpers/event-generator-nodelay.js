@@ -48,7 +48,7 @@ class eventGeneratorNoDelay extends eventGenerator {
   }
 
   emit(data) {
-    const { name, team, player, update, elapsed } = data;
+    const { name, team, player, update, elapsed = 0 } = data;
     const { first_name, second_name, id, position } = player || {};
 
     eventService.createEvent({
