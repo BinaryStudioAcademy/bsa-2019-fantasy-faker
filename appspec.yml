@@ -14,8 +14,8 @@ permissions:
 
 hooks:
   BeforeInstall:
-    - location: server/scripts/before-install.sh
+    - location: scripts/before-install.sh
       runas: ubuntu
   ApplicationStart:
-    - location: server/scripts/app-start.sh
+    - location: scripts/app-start.sh
       runas: ubuntu
