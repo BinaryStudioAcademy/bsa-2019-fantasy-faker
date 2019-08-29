@@ -7,8 +7,8 @@ import routes from "./api/routes/index";
 import errorHandlerMiddleware from "./api/middlewares/error-handler.middleware";
 import socketInjector from "./socket/injector";
 import socketHandlers from "./socket/handlers";
-import gameweekGenerator from './helpers/gameweek-generator';
-import generateEvents from "./socket/generateEvents";
+import gameweekGenerator from "./helpers/gameweek-generator";
+import initSchedulers from "./schedulers";
 
 import sequelize from "./data/db/connection";
 
@@ -22,6 +22,7 @@ sequelize
   .authenticate()
   .then(() => {
     console.log("Connection has been established successfully.");
+    initSchedulers(io);
   })
   .catch(err => {
     console.error("Unable to connect to the database:", err);
@@ -41,10 +42,12 @@ app.get("/", function(req, res) {
 });
 
 app.use(errorHandlerMiddleware);
-app.listen(process.env.APP_PORT, () => {
+app.listen(process.env.APP_PORT, async () => {
   // eslint-disable-next-line no-console
   console.log(`Server listening on port ${process.env.APP_PORT}!`);
-  gameweekGenerator.setEvents();
+  await gameweekGenerator.setEvents();
+  console.log("Sending update socket event");
+  io.emit("update");
 });
 
 socketServer.listen(process.env.SOCKET_PORT);

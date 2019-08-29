@@ -11,6 +11,12 @@ router
       .then(value => res.json(value))
       .catch(next)
   )
+  .get("/after", (req, res, next) =>
+    gameService
+      .getGamesAfter(req.query.timestamp)
+      .then(value => res.json(value))
+      .catch(next)
+  )
   .get("/start", (req, res, next) => eventGenerator.startGame())
   .get("/:id", (req, res, next) =>
     gameService

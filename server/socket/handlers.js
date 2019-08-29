@@ -2,7 +2,6 @@ import eventGenerator from "../helpers/event-generator";
 
 export default socket => {
   console.log("Socket connection established");
-
   socket.emit("status", eventGenerator.checkStatus());
   // delete next block after test
 
@@ -21,7 +20,7 @@ export default socket => {
   });
   socket.on("simulate", props => {
     console.log("simulate request");
-    eventGenerator.initGame(props, socket);
+    eventGenerator.initGame({ ...props, isSimulation: true }, socket);
   });
 
   socket.on("stopSimulation", () => {

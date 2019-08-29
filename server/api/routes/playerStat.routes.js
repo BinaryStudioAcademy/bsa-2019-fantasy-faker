@@ -10,6 +10,11 @@ router
       .then(value => res.json(value))
       .catch(next)
   )
+  .get('/after', (req, res, next) => 
+    playerStatService.getPlayerStatsAfter(req.query.timestamp)
+    .then(value => res.json(value))
+    .catch(next)
+  )
   .get('/:id', (req, res, next) =>
     playerStatService
       .getAllPlayerStatsById(req.params.id)

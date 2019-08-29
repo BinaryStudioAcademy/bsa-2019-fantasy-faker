@@ -1,4 +1,4 @@
-import gameRepository from '../../data/repositories/game.repository';
+import gameRepository from "../../data/repositories/game.repository";
 
 export const getAllGames = async () => await gameRepository.getAll();
 
@@ -26,4 +26,8 @@ export const updateGameScore = async (id, hometeam_score, awayteam_score) => {
   });
 
   return result;
+};
+
+export const getGamesAfter = async timestamp => {
+  return await gameRepository.getAfter(timestamp);
 };

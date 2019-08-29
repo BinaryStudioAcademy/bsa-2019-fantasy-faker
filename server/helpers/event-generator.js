@@ -1,11 +1,17 @@
 import { events, probabilities } from "../config/event-generator.config";
-import { mainApp } from "../helpers/api.helper";
+import * as eventService from "../api/services/event.service";
+import * as playerMatchStatServices from "../api/services/playerMatchStat.service";
+import * as playerStatService from "../api/services/playerStat.service";
+import * as gameService from "../api/services/game.service";
+
+import updatePlayerStats from "./update-player-stats.js";
+import { throws } from "assert";
 
 const TIME_DURATION = 150; // in seconds
 const EVENT_INTERVAL = 5; // in seconds
 const GAME_EVENTS_COUNT = (TIME_DURATION / EVENT_INTERVAL) * 2; // there is two times
 
-class eventGenerator {
+export class eventGenerator {
   constructor() {
     this.timesCount;
     this.timeouts = {};
@@ -15,6 +21,8 @@ class eventGenerator {
     this.score = [0, 0];
     this.possibleNextEvent = undefined;
     this.prevEvent = undefined;
+    this.playerMatchStats = [];
+    this.eventsLog = [];
 
     this.eventHandlers = {
       goal: event => {
@@ -25,19 +33,20 @@ class eventGenerator {
         } else if (event.team === "away") {
           this.score = [home, away + 1];
         }
+
+        this.isSimulation ||
+          gameService.updateGameScore(
+            this.gameId,
+            this.score[0],
+            this.score[1]
+          );
         return { score: this.score };
       }
     };
   }
 
   async fetchPlayers(club_id) {
-    try {
-      const response = await mainApp.get("/players", { params: { club_id } });
-      //console.log(response.data);
-      return response.data.rows;
-    } catch (error) {
-      console.error(error);
-    }
+    return playerStatService.getAllPlayerStatsByClubId(club_id);
   }
 
   checkStatus() {
@@ -52,21 +61,53 @@ class eventGenerator {
 
     this.gameStarted = true;
     this.setTimestamp("initGame");
+    console.log("init game");
 
-    const { homeClub, awayClub, timeout } = data;
+    const {
+      homeClub,
+      awayClub,
+      timeout,
+      id,
+      start,
+      isSimulation = false
+    } = data;
     this.socket = socket;
+    this.isSimulation = isSimulation;
     this.homeClubId = homeClub;
     this.awayClubId = awayClub;
+    this.gameId = id;
+    this.start = start;
     this.homePlayers = await this.fetchPlayers(this.homeClubId);
     this.awayPlayers = await this.fetchPlayers(this.awayClubId);
     // TODO: parallel requests above
 
-    this.eventCycle = this.eventCycleGenerator();
+    const playersArray = [...this.homePlayers, ...this.awayPlayers];
 
-    this.timeouts.startGame = setTimeout(
-      () => this.startGame(),
-      timeout * 1000
+    // Creates empty player stats in playerMatchStats
+    await Promise.all(
+      playersArray.map(async player => {
+        try {
+          const data = await playerMatchStatServices.createPlayer(
+            player.id,
+            this.gameId
+          );
+
+          this.playerMatchStats.push(data.get({ plain: true }));
+        } catch (err) {
+          console.log(err);
+        }
+      })
     );
+
+    this.eventCycle = this.eventCycleGenerator();
+    if (timeout) {
+      this.timeouts.startGame = setTimeout(
+        () => this.startGame(),
+        timeout * 1000
+      );
+    } else {
+      this.startGame();
+    }
   }
 
   setTimestamp(name, index = undefined) {
@@ -125,9 +166,14 @@ class eventGenerator {
     );
   }
 
-  endGame() {
+  async endGame() {
     this.gameStarted = false;
     this.setTimestamp("endGame");
+    this.emit({ name: "endGame", elapsed: this.elapsed() });
+    await this.updatePlayerMatchStats();
+    if (this.socket) {
+      this.socket.emit("update");
+    }
   }
 
   stopGame() {
@@ -239,7 +285,7 @@ class eventGenerator {
   }
 
   generateText(data) {
-    let text = `Event '${data.name}' `;
+    let text = `Minute ${data.elapsed / 1000 / 60}, event '${data.name}' `;
     data.player &&
       (text += `from team '${data.team}' by '${data.player &&
         data.player.position}' ${data.player.first_name} ${
@@ -249,8 +295,17 @@ class eventGenerator {
   }
 
   emit(data) {
-    const { name, team, player, update, elapsed } = data;
+    const { name, team, player, update, elapsed = 0 } = data;
     const { first_name, second_name, id, position } = player || {};
+
+    if (!this.isSimulation) {
+      eventService.createEvent({
+        event_type: name,
+        player_id: id || null,
+        game_id: this.gameId,
+        time: elapsed
+      });
+    }
 
     const event = {
       name,
@@ -260,9 +315,60 @@ class eventGenerator {
       text: this.generateText(data),
       ...update
     };
+    this.eventsLog.push(event);
 
     console.log(event.text);
-    this.socket.emit("event", event);
+    if (this.socket) this.socket.emit("event", event);
+  }
+
+  async updatePlayerMatchStats() {
+    console.log(this.score);
+    if (this.isSimulation) return true;
+    this.playerMatchStats.map(async player => {
+      const goals = this.eventsLog.filter(
+        event =>
+          event.name === "goal" &&
+          event.player &&
+          event.player.id === player.player_id
+      ).length;
+      const assists = 0; // to write later
+      const missed_passes = 0; // to write later
+      const isHomePlayer = this.homePlayers.find(
+        item => item.id === player.player_id
+      );
+      const goals_conceded = isHomePlayer ? this.score[1] : this.score[0];
+      const saves = this.eventsLog.filter(
+        event =>
+          event.name === "save" &&
+          event.player &&
+          event.player.id === player.player_id
+      ).length;
+      const yellow_cards = this.eventsLog.filter(
+        event =>
+          event.name === "yellowCard" &&
+          event.player &&
+          event.player.id === player.player_id
+      ).length;
+      const red_cards = 0; // to write later
+      const injury = new Date();
+      const data = {
+        id: player.id,
+        goals,
+        assists,
+        missed_passes,
+        goals_conceded,
+        saves,
+        yellow_cards,
+        red_cards,
+        injury
+      };
+      try {
+        const resp = await playerMatchStatServices.update(data);
+        await updatePlayerStats(data);
+      } catch (err) {
+        console.log(err);
+      }
+    });
   }
 }
 
