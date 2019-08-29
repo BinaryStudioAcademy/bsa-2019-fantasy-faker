@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/ubuntu/bsa-2019-fantasy-faker/
+cd /home/ubuntu/bsa-2019-fantasy-faker/server
 yarn
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all

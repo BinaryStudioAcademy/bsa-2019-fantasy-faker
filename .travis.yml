@@ -10,6 +10,11 @@ branches:
 before_install:
   - pip install --user awscli
 
+install:
+  - mkdir ./server
+  - mv ./* ./server/*
+
+
 deploy:
 - provider: s3
   access_key_id: $AWS_ACCESS_KEY
