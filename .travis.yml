@@ -12,7 +12,7 @@ before_install:
 
 install:
   - mkdir ./server
-  - mv ./* ./server/*
+  - mv !(server) server
 
 
 deploy:
