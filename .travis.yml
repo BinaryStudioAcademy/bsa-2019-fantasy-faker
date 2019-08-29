@@ -10,9 +10,6 @@ branches:
 before_install:
   - pip install --user awscli
 
-install:
-  - npm install
-
 deploy:
 - provider: s3
   access_key_id: $AWS_ACCESS_KEY
@@ -38,6 +35,7 @@ deploy:
 script:
   - export SKIP_PREFLIGHT_CHECK=true
   - aws s3 cp s3://bsa-2019-s3-bucket/.env-faker server/.env
-  - zip -r latest-faker * >/dev/null
+  - ls /dev/null
+  - zip -r latest-faker * > /dev/null
   - mkdir -p dpl_cd_upload
   - mv latest-faker.zip dpl_cd_upload/latest-faker.zip
