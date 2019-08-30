@@ -11,6 +11,9 @@ export default socket => {
   //   timeout: 3
   // };
   // eventGenerator.initGame(props, socket);
+  socket.on("status", () => {
+    socket.emit("status", eventGenerator.checkStatus());
+  });
 
   socket.on("createRoom", roomId => {
     socket.join(roomId);

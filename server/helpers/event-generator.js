@@ -50,6 +50,15 @@ export class eventGenerator {
   }
 
   checkStatus() {
+    const gameStarted = this.gameStarted;
+    if (gameStarted)
+      return {
+        gameStarted,
+        homeClubId: this.homeClubId,
+        awayClubId: this.awayClubId,
+        score: this.score,
+        elapsed: this.elapsed()
+      };
     return { gameStarted: this.gameStarted };
   }
 
@@ -124,6 +133,7 @@ export class eventGenerator {
   }
 
   startGame() {
+    this.socket.emit("status", this.checkStatus());
     this.setTimestamp("startGame");
     this.emit({ name: "startGame" });
     this.timesCount = 0;
