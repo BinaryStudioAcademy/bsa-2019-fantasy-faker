@@ -32,7 +32,7 @@ const promise = new Promise((resolve, reject) => {
       })
     )
     .on("data", data => {
-      results.push({ ...data, createdAt: now, updatedAt: now });
+      results.push({ ...data, transfers_in: 0, transfers_out: 0, createdAt: now, updatedAt: now }); 
     })
     .on("end", () => {
       resolve(results);
