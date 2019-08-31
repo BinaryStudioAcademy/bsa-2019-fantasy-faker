@@ -329,7 +329,15 @@ export class eventGenerator {
       ).length;
       const red_cards = 0; // to write later
       const injury = new Date();
-      const score = calculatePlayerScore(this.eventsLog);
+      const score = calculatePlayerScore({
+        goals,
+        assists,
+        missed_passes,
+        goals_conceded,
+        saves,
+        yellow_cards,
+        red_cards
+      });
       const data = {
         id: player.id,
         goals,
@@ -342,7 +350,6 @@ export class eventGenerator {
         injury,
         player_score: score
       };
-      console.log(this.eventsLog);
       try {
         const resp = await playerMatchStatServices.update(data);
         await updatePlayerStats(data);
