@@ -161,7 +161,7 @@ export default {
                 type: Sequelize.INTEGER
               },
               player_score: {
-                allowNull: false,
+                allowNull: true,
                 type: Sequelize.INTEGER
               },
               injury: Sequelize.DATE,
