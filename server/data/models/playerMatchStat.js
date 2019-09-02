@@ -4,31 +4,35 @@ export default (orm, DataTypes) => {
     {
       goals: {
         allowNull: false,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       assists: {
         allowNull: false,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       missed_passes: {
         allowNull: false,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       goals_conceded: {
         allowNull: false,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       saves: {
         allowNull: false,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       yellow_cards: {
         allowNull: false,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
       },
       red_cards: {
         allowNull: false,
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER
+      },
+      player_score: {
+        allowNull: true,
+        type: DataTypes.INTEGER
       },
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,
@@ -36,19 +40,19 @@ export default (orm, DataTypes) => {
         type: DataTypes.UUID,
         references: {
           model: 'player_stats',
-          key: 'id',
-        },
+          key: 'id'
+        }
       },
       injury: DataTypes.DATE,
       game_id: {
         type: DataTypes.UUID,
         references: {
           model: 'games',
-          key: 'id',
-        },
-      },
+          key: 'id'
+        }
+      }
     },
-    {},
+    {}
   );
 
   return PlayerMatchStat;
