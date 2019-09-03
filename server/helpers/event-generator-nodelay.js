@@ -17,7 +17,7 @@ class eventGeneratorNoDelay extends eventGenerator {
     this.endTime();
     this.startTime();
     this.endTime();
-    this.endGame();
+    return this.endGame();
   }
 
   startTime() {

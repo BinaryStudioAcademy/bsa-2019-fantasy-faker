@@ -5,9 +5,8 @@ const calculatePlayerScore = ({
   goals_conceded,
   saves,
   yellow_cards,
-  red_cards,
+  red_cards
 }) => {
-  console.log(goals);
   let score = 0;
   score += goals * 8;
   score += assists * 6;

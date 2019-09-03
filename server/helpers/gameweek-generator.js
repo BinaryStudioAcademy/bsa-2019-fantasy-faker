@@ -1,14 +1,14 @@
-import * as gameweekService from '../api/services/gameweek.service';
-import * as footballClubService from '../api/services/footballClub.service';
-import * as gameService from '../api/services/game.service';
-import * as eventService from '../api/services/event.service';
-import * as playerStatService from '../api/services/playerStat.service.js';
+import * as gameweekService from "../api/services/gameweek.service";
+import * as footballClubService from "../api/services/footballClub.service";
+import * as gameService from "../api/services/game.service";
+import * as eventService from "../api/services/event.service";
+import * as playerStatService from "../api/services/playerStat.service.js";
 
 import eventGeneratorNoDelay from "./../helpers/event-generator-nodelay";
 
 class gameweekGenerator {
   constructor() {
-    console.log('gameweek generator constructor');
+    console.log("gameweek generator constructor");
     this.gameweeks = [];
   }
 
@@ -49,35 +49,34 @@ class gameweekGenerator {
     this.gameweeks = await this.getPreviousGameweeks();
     this.teams = await this.getTeams();
 
-    await Promise.all(
-      this.gameweeks.map(async gameweek => await this.updateGames(gameweek))
-    ); 
-    
+    for (let i = 0; i < this.gameweeks.length; i++) {
+      await this.updateGames(this.gameweeks[i]);
+    }
+
     return this.endGenerating();
   }
 
   async updateGames(gameweek) {
     const games = await gameService.getByGameweekId(gameweek.number);
 
-    await Promise.all(
-      games.map(async game => {
-        const { id, hometeam_id, awayteam_id, started, finished } = game;
-        this.gameId = id;
-        const isAnyEvent = await this.checkEvents(id);
-        if (!isAnyEvent) {
-          const eGenerator = new eventGeneratorNoDelay();
-
-          await eGenerator.initGame(
-            { homeClub: hometeam_id, awayClub: awayteam_id, id }
-          );
-        }
-
-        if (!started || !finished) {
-          await gameService.updateGameToBeFinished(id);
-        }
-      })
-    );
-
+    for (let i = 0; i < games.length; i++) {
+      const { id, hometeam_id, awayteam_id, started, finished } = games[i];
+      this.gameId = id;
+      const eGenerator = new eventGeneratorNoDelay();
+      const isAnyEvent = await this.checkEvents(id);
+      if (!isAnyEvent) {
+        const res = await eGenerator.initGame({
+          homeClub: hometeam_id,
+          awayClub: awayteam_id,
+          id
+        });
+        console.log("genaration finished");
+        console.log(res);
+      }
+      if (!started || !finished) {
+        await gameService.updateGameToBeFinished(id);
+      }
+    }
   }
 
   async checkEvents(game_id) {
@@ -90,7 +89,7 @@ class gameweekGenerator {
   }
 
   endGenerating() {
-    console.log('fullfilled');
+    console.log("fullfilled");
   }
 }
 
