@@ -81,30 +81,16 @@ export class eventGenerator {
 
     const playersArray = [...this.homePlayers, ...this.awayPlayers];
 
-    // Creates empty player stats in playerMatchStats
-    // await Promise.all(
-    //   playersArray.map(async player => {
-    //     try {
-    //       const data = await playerMatchStatServices.createPlayer(
-    //         player.id,
-    //         this.gameId
-    //       );
+    if (!this.isSimulation) {
+      for (let i = 0; i < playersArray.length; i++) {
+        const player = playersArray[i];
+        try {
+          const data = await playerMatchStatServices.createPlayer(player.id, this.gameId);
 
-    //       this.playerMatchStats.push(data.get({ plain: true }));
-    //     } catch (err) {
-    //       console.log(err);
-    //     }
-    //   })
-    // );
-
-    for (let i = 0; i < playersArray.length; i++) {
-      const player = playersArray[i];
-      try {
-        const data = await playerMatchStatServices.createPlayer(player.id, this.gameId);
-
-        this.playerMatchStats.push(data.get({ plain: true }));
-      } catch (err) {
-        console.log(err);
+          this.playerMatchStats.push(data.get({ plain: true }));
+        } catch (err) {
+          console.log(err);
+        }
       }
     }
 
