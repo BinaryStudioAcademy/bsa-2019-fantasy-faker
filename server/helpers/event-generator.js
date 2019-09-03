@@ -86,7 +86,6 @@ export class eventGenerator {
         const player = playersArray[i];
         try {
           const data = await playerMatchStatServices.createPlayer(player.id, this.gameId);
-
           this.playerMatchStats.push(data.get({ plain: true }));
         } catch (err) {
           console.log(err);
