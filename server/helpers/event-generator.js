@@ -187,7 +187,7 @@ export class eventGenerator {
       (await gameService.updateGameToBeFinished(this.gameId));
     const res = await this.updatePlayerMatchStats();
     if (this.socket) {
-      this.socket.emit("update");
+      this.socket.emit("status", this.checkStatus());
     }
     return res;
   }
