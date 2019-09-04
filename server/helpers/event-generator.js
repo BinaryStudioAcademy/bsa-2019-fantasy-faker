@@ -59,7 +59,8 @@ export class eventGenerator {
         homeClubId: this.homeClubId,
         awayClubId: this.awayClubId,
         score: this.score,
-        elapsed: this.elapsed()
+        elapsed: this.elapsed(),
+        isSimulation: this.isSimulation
       };
     return { gameStarted: this.gameStarted };
   }
@@ -329,6 +330,7 @@ export class eventGenerator {
       player: player ? { first_name, second_name, id, position } : undefined,
       team,
       elapsed,
+      isSimulation: this.isSimulation,
       text: this.generateText(data),
       ...update
     };
