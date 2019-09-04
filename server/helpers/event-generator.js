@@ -179,7 +179,8 @@ export class eventGenerator {
     this.gameStarted = false;
     this.setTimestamp("endGame");
     this.emit({ name: "endGame", elapsed: this.elapsed() });
-    await gameService.updateGameToBeFinished(this.gameId);
+    this.isSimulation ||
+      (await gameService.updateGameToBeFinished(this.gameId));
     const res = await this.updatePlayerMatchStats();
     if (this.socket) {
       this.socket.emit("update");
@@ -200,7 +201,7 @@ export class eventGenerator {
   elapsed(now = Date.now()) {
     const startTime = this.timestamps.startTime
       ? this.timestamps.startTime[1]
-      : 0;
+      : now;
     const elapsed = Math.round(((now - startTime) / TIME_DURATION) * 45 * 60);
     return elapsed;
   }
