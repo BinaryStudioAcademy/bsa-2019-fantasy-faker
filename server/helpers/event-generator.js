@@ -7,8 +7,10 @@ import * as gameService from "../api/services/game.service";
 import updatePlayerStats from "./update-player-stats.js";
 import calculatePlayerScore from "./calculate-player-score.helper";
 
-const TIME_DURATION = 150; // in seconds
-const EVENT_INTERVAL = 5; // in seconds
+// const TIME_DURATION = 150; // in seconds
+// const EVENT_INTERVAL = 5; // in seconds
+const TIME_DURATION = 30; // in seconds
+const EVENT_INTERVAL = 1; // in seconds
 const GAME_EVENTS_COUNT = (TIME_DURATION / EVENT_INTERVAL) * 2; // there is two times
 
 export class eventGenerator {
