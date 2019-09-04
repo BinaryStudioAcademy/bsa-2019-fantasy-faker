@@ -6,8 +6,7 @@ import eventGenerator from "./../helpers/event-generator";
 import eventGeneratorNoDelay from "./../helpers/event-generator-nodelay";
 
 const gameScheduler = async io => {
-  const nextGame = await gameRepository.getNext();
-  const date = moment().add(5, "seconds");
+  const nextGame = await gameRepository.getNext(); //moment().add(5, "seconds")
 
   schedule.scheduleJob(
     "next-game",
@@ -15,16 +14,15 @@ const gameScheduler = async io => {
     async fireDate => {
       console.log(`>>> Game time! ${fireDate}`);
       const { hometeam_id, awayteam_id, id } = nextGame;
-      const eGenerator = new eventGeneratorNoDelay();
-      eGenerator.initGame(
+      eventGenerator.initGame(
         { homeClub: hometeam_id, awayClub: awayteam_id, id },
         io
       );
 
-      //gameScheduler();
+      gameScheduler();
     }
   );
-  console.log(`>>> Next game scheduled on: ${date}`);
+  console.log(`>>> Next game scheduled on: ${nextGame.start}`);
 };
 
 export default gameScheduler;

@@ -1,11 +1,11 @@
-import { events, probabilities } from '../config/event-generator.config';
-import * as eventService from '../api/services/event.service';
-import * as playerMatchStatServices from '../api/services/playerMatchStat.service';
-import * as playerStatService from '../api/services/playerStat.service';
-import * as gameService from '../api/services/game.service';
+import { events, probabilities } from "../config/event-generator.config";
+import * as eventService from "../api/services/event.service";
+import * as playerMatchStatServices from "../api/services/playerMatchStat.service";
+import * as playerStatService from "../api/services/playerStat.service";
+import * as gameService from "../api/services/game.service";
 
-import updatePlayerStats from './update-player-stats.js';
-import calculatePlayerScore from './calculate-player-score.helper';
+import updatePlayerStats from "./update-player-stats.js";
+import calculatePlayerScore from "./calculate-player-score.helper";
 
 const TIME_DURATION = 150; // in seconds
 const EVENT_INTERVAL = 5; // in seconds
@@ -28,14 +28,18 @@ export class eventGenerator {
       goal: event => {
         const [home, away] = this.score;
 
-        if (event.team === 'home') {
+        if (event.team === "home") {
           this.score = [home + 1, away];
-        } else if (event.team === 'away') {
+        } else if (event.team === "away") {
           this.score = [home, away + 1];
         }
 
         this.isSimulation ||
-          gameService.updateGameScore(this.gameId, this.score[0], this.score[1]);
+          gameService.updateGameScore(
+            this.gameId,
+            this.score[0],
+            this.score[1]
+          );
         return { score: this.score };
       }
     };
@@ -65,10 +69,17 @@ export class eventGenerator {
     this.possibleNextEvent = undefined;
 
     this.gameStarted = true;
-    this.setTimestamp('initGame');
-    console.log('init game');
+    this.setTimestamp("initGame");
+    console.log("init game");
 
-    const { homeClub, awayClub, timeout, id, start, isSimulation = false } = data;
+    const {
+      homeClub,
+      awayClub,
+      timeout,
+      id,
+      start,
+      isSimulation = false
+    } = data;
     this.socket = socket;
     this.isSimulation = isSimulation;
     this.homeClubId = homeClub;
@@ -85,7 +96,10 @@ export class eventGenerator {
       for (let i = 0; i < playersArray.length; i++) {
         const player = playersArray[i];
         try {
-          const data = await playerMatchStatServices.createPlayer(player.id, this.gameId);
+          const data = await playerMatchStatServices.createPlayer(
+            player.id,
+            this.gameId
+          );
           this.playerMatchStats.push(data.get({ plain: true }));
         } catch (err) {
           console.log(err);
@@ -95,7 +109,10 @@ export class eventGenerator {
 
     this.eventCycle = this.eventCycleGenerator();
     if (timeout) {
-      this.timeouts.startGame = setTimeout(() => this.startGame(), timeout * 1000);
+      this.timeouts.startGame = setTimeout(
+        () => this.startGame(),
+        timeout * 1000
+      );
     } else {
       return this.startGame();
     }
@@ -115,9 +132,9 @@ export class eventGenerator {
   }
 
   startGame() {
-    this.socket.emit('status', this.checkStatus());
-    this.setTimestamp('startGame');
-    this.emit({ name: 'startGame' });
+    this.socket.emit("status", this.checkStatus());
+    this.setTimestamp("startGame");
+    this.emit({ name: "startGame" });
     this.timesCount = 0;
     this.timeouts.startTime = setTimeout(
       () => this.startTime(),
@@ -127,13 +144,16 @@ export class eventGenerator {
 
   startTime() {
     this.timesCount++;
-    this.setTimestamp('startTime', this.timesCount);
+    this.setTimestamp("startTime", this.timesCount);
     this.emit({
-      name: 'startTime',
+      name: "startTime",
       update: { time: this.timesCount },
       elapsed: 0
     });
-    this.timeouts.endTime = setTimeout(() => this.endTime(), TIME_DURATION * 1000);
+    this.timeouts.endTime = setTimeout(
+      () => this.endTime(),
+      TIME_DURATION * 1000
+    );
     this.eventCycleInterval = setInterval(
       () => this.eventGenerator(),
       EVENT_INTERVAL * 1000
@@ -142,9 +162,9 @@ export class eventGenerator {
 
   endTime() {
     clearInterval(this.eventCycleInterval);
-    this.setTimestamp('endTime', this.timesCount);
+    this.setTimestamp("endTime", this.timesCount);
     this.emit({
-      name: 'endTime',
+      name: "endTime",
       time: this.timesCount,
       elapsed: this.elapsed()
     });
@@ -157,27 +177,29 @@ export class eventGenerator {
 
   async endGame() {
     this.gameStarted = false;
-    this.setTimestamp('endGame');
-    this.emit({ name: 'endGame', elapsed: this.elapsed() });
+    this.setTimestamp("endGame");
+    this.emit({ name: "endGame", elapsed: this.elapsed() });
     const res = await this.updatePlayerMatchStats();
     if (this.socket) {
-      this.socket.emit('update');
+      this.socket.emit("update");
     }
     return res;
   }
 
   stopGame() {
-    this.setTimestamp('stopGame');
+    this.setTimestamp("stopGame");
     this.gameStarted = false;
 
     clearInterval(this.eventCycleInterval);
     clearInterval(this.timeouts.endTime);
     clearInterval(this.timeouts.endGame);
-    this.emit({ name: 'stopGame', elapsed: this.elapsed() });
+    this.emit({ name: "stopGame", elapsed: this.elapsed() });
   }
 
   elapsed(now = Date.now()) {
-    const startTime = this.timestamps.startTime ? this.timestamps.startTime[1] : 0;
+    const startTime = this.timestamps.startTime
+      ? this.timestamps.startTime[1]
+      : 0;
     const elapsed = Math.round(((now - startTime) / TIME_DURATION) * 45 * 60);
     return elapsed;
   }
@@ -213,26 +235,28 @@ export class eventGenerator {
   handleDirection(eventObject) {
     const { subject, direction } = eventObject;
     switch (direction) {
-      case 'samePlayer': {
+      case "samePlayer": {
         return { team: this.prevEvent.team, player: this.prevEvent.player };
       }
-      case 'sameTeam': {
+      case "sameTeam": {
         const { team } = this.prevEvent;
         return {
           team,
           player: this.getProbablePlayer(subject, team)
         };
       }
-      case 'otherTeam': {
-        const team = this.prevEvent.team === 'home' ? 'away' : 'home';
+      case "otherTeam": {
+        const team = this.prevEvent.team === "home" ? "away" : "home";
         return {
           team,
           player: this.getProbablePlayer(subject, team)
         };
       }
       default: {
-        const team = this.getRandomInt(2) ? 'home' : 'away';
-        const player = subject ? this.getProbablePlayer(subject, team) : undefined;
+        const team = this.getRandomInt(2) ? "home" : "away";
+        const player = subject
+          ? this.getProbablePlayer(subject, team)
+          : undefined;
         return { team, player };
       }
     }
@@ -243,8 +267,10 @@ export class eventGenerator {
   }
 
   getRandomPlayer(position, team) {
-    const players = team === 'home' ? this.homePlayers : this.awayPlayers;
-    const positionPlayers = players.filter(player => player.position === position);
+    const players = team === "home" ? this.homePlayers : this.awayPlayers;
+    const positionPlayers = players.filter(
+      player => player.position === position
+    );
     // TODO: exclude bench players here
     const player = positionPlayers[this.getRandomInt(positionPlayers.length)];
     return player;
@@ -258,22 +284,23 @@ export class eventGenerator {
     const random = Math.random();
     let topLimit = 0;
     for (const key in obj) {
-      if (key === '_normalize') continue;
+      if (key === "_normalize") continue;
       const value = obj[key] || 0;
       const probability = obj._normalize ? value / GAME_EVENTS_COUNT : value;
       topLimit += probability;
       if (random < topLimit) return key;
     }
     const defaultKey = Object.keys(obj).find(key => obj[key] === undefined);
-    return defaultKey || 'nothing';
+    return defaultKey || "nothing";
   }
 
   generateText(data) {
     let text = `Minute ${data.elapsed / 1000 / 60}, event '${data.name}' `;
     data.player &&
-      (text += `from team '${data.team}' by '${data.player && data.player.position}' ${
-        data.player.first_name
-      } ${data.player.second_name}`);
+      (text += `from team '${data.team}' by '${data.player &&
+        data.player.position}' ${data.player.first_name} ${
+        data.player.second_name
+      }`);
     return text;
   }
 
@@ -301,7 +328,7 @@ export class eventGenerator {
     this.eventsLog.push(event);
 
     console.log(event.text);
-    if (this.socket) this.socket.emit('event', event);
+    if (this.socket) this.socket.emit("event", event);
   }
 
   async updatePlayerMatchStats() {
@@ -310,20 +337,22 @@ export class eventGenerator {
     for (let i = 0; i < this.playerMatchStats.length; i++) {
       const player = this.playerMatchStats[i];
 
-      const goals = this.filterGeneral('goal', player);
-      const saves = this.filterGeneral('save', player);
-      const missed_passes = this.filterGeneral('interception', player); // Temporary solution. Negative event changed to positive
-      const yellow_cards = this.filterGeneral('yellowCard', player);
-      const assists = this.filterAssists('goal', player); // Workaround to fill assists
+      const goals = this.filterGeneral("goal", player);
+      const saves = this.filterGeneral("save", player);
+      const missed_passes = this.filterGeneral("interception", player); // Temporary solution. Negative event changed to positive
+      const yellow_cards = this.filterGeneral("yellowCard", player);
+      const assists = this.filterAssists("goal", player); // Workaround to fill assists
       const red_cards = 0; // to write later
 
-      const isHomePlayer = this.homePlayers.find(item => item.id === player.player_id);
+      const isHomePlayer = this.homePlayers.find(
+        item => item.id === player.player_id
+      );
       const { position } = await playerStatService.getAllPlayerStatsById(
         player.player_id
       );
 
       let goals_conceded = 0;
-      if (position === 'GKP' || position === 'DEF') {
+      if (position === "GKP" || position === "DEF") {
         goals_conceded = isHomePlayer ? this.score[1] : this.score[0];
       }
 
@@ -361,7 +390,9 @@ export class eventGenerator {
   filterGeneral(eventName, player) {
     return this.eventsLog.filter(
       event =>
-        event.name === eventName && event.player && event.player.id === player.player_id
+        event.name === eventName &&
+        event.player &&
+        event.player.id === player.player_id
     ).length;
   }
 
