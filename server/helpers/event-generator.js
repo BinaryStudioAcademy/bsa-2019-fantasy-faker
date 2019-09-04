@@ -63,6 +63,7 @@ export class eventGenerator {
   }
 
   async initGame(data, socket) {
+    if (this.gameStarted) return false;
     this.score = [0, 0];
     this.timestamps = {};
     this.timesCount = 0;
