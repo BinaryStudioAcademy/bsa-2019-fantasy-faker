@@ -148,7 +148,7 @@ export class eventGenerator {
     this.emit({
       name: "startTime",
       update: { time: this.timesCount },
-      elapsed: 0
+      elapsed: this.elapsed()
     });
     this.timeouts.endTime = setTimeout(
       () => this.endTime(),
@@ -179,6 +179,7 @@ export class eventGenerator {
     this.gameStarted = false;
     this.setTimestamp("endGame");
     this.emit({ name: "endGame", elapsed: this.elapsed() });
+    await gameService.updateGameToBeFinished(this.gameId);
     const res = await this.updatePlayerMatchStats();
     if (this.socket) {
       this.socket.emit("update");
@@ -295,7 +296,9 @@ export class eventGenerator {
   }
 
   generateText(data) {
-    let text = `Minute ${data.elapsed / 1000 / 60}, event '${data.name}' `;
+    let text = `Minute ${Math.round(data.elapsed / 1000 / 60)}, event '${
+      data.name
+    }' `;
     data.player &&
       (text += `from team '${data.team}' by '${data.player &&
         data.player.position}' ${data.player.first_name} ${
