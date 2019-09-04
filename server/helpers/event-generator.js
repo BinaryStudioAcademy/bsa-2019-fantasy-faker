@@ -200,6 +200,7 @@ export class eventGenerator {
     clearInterval(this.timeouts.endTime);
     clearInterval(this.timeouts.endGame);
     this.emit({ name: "stopGame", elapsed: this.elapsed() });
+    this.socket.emit("status", this.checkStatus());
   }
 
   elapsed(now = Date.now()) {
