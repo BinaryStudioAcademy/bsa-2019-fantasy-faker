@@ -65,12 +65,13 @@ export class eventGenerator {
     return { gameStarted: this.gameStarted };
   }
 
-  async initGame(data, socket) {
+  async initGame(data, socket, callback) {
     if (this.gameStarted) return false;
     this.score = [0, 0];
     this.timestamps = {};
     this.timesCount = 0;
     this.possibleNextEvent = undefined;
+    this.callback = callback;
 
     this.gameStarted = true;
     this.setTimestamp("initGame");
@@ -189,6 +190,7 @@ export class eventGenerator {
     if (this.socket) {
       this.socket.emit("status", this.checkStatus());
     }
+    typeof this.callback === "function" && this.callback();
     return res;
   }
 
@@ -390,7 +392,7 @@ export class eventGenerator {
       };
       try {
         await playerMatchStatServices.update(data);
-        await updatePlayerStats(data);
+        await updatePlayerStats(player.player_id, data);
       } catch (err) {
         console.log(err);
       }

@@ -8,7 +8,6 @@ import eventGeneratorNoDelay from "./../helpers/event-generator-nodelay";
 
 class gameweekGenerator {
   constructor() {
-    console.log("gameweek generator constructor");
     this.gameweeks = [];
   }
 
@@ -71,7 +70,6 @@ class gameweekGenerator {
           id
         });
         console.log("genaration finished");
-        console.log(res);
       }
       if (!started || !finished) {
         await gameService.updateGameToBeFinished(id);
@@ -89,7 +87,7 @@ class gameweekGenerator {
   }
 
   endGenerating() {
-    console.log("fullfilled");
+    console.log(">>> Passed events generation fullfilled.");
   }
 }
 

@@ -2,15 +2,13 @@ import eventGenerator from "../helpers/event-generator";
 
 export default socket => {
   console.log("Socket connection established");
-  socket.emit("status", eventGenerator.checkStatus());
-  // delete next block after test
 
-  // const props = {
-  //   homeClubId: 2,
-  //   awayClubId: 3,
-  //   timeout: 3
-  // };
-  // eventGenerator.initGame(props, socket);
+  // Update db
+  socket.emit("update");
+
+  // Update status of game
+  socket.emit("status", eventGenerator.checkStatus());
+
   socket.on("status", () => {
     socket.emit("status", eventGenerator.checkStatus());
   });

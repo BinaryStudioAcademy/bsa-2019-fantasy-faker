@@ -1,12 +1,13 @@
 import * as playerMatchStatServices from "../api/services/playerMatchStat.service";
 import * as playerStatService from "../api/services/playerStat.service";
 
-export default async function updatePlayerStats (data) {
-	// player match stat id
-	const { id, ...events } = data;
+export default async function updatePlayerStats(player_id, data) {
+  // player match stat id
+  const { id, ...events } = data;
+  const updatedPlayerStats = await playerStatService.updatePlayerStats(
+    player_id,
+    events
+  );
 
-	const playerStats = await playerMatchStatServices.getPlayerByMatchStatId(id);
-	const updatedPlayerStats = await playerStatService.updatePlayerStats(playerStats.player.id, events);
-	
-	return updatedPlayerStats;
-};
+  return updatedPlayerStats;
+}

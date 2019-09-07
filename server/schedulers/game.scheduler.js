@@ -14,9 +14,13 @@ const gameScheduler = async io => {
     async fireDate => {
       console.log(`>>> Game time! ${fireDate}`);
       const { hometeam_id, awayteam_id, id } = nextGame;
+      const callback = () => {
+        io.emit("update");
+      };
       eventGenerator.initGame(
         { homeClub: hometeam_id, awayClub: awayteam_id, id },
-        io
+        io,
+        callback
       );
 
       gameScheduler();
