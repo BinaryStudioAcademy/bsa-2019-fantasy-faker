@@ -14,7 +14,7 @@ export default {
       transfers_in: 0,
       transfers_out: 0
     };
-    queryInterface.bulkUpdate("player_stats", nulledData);
+    return queryInterface.bulkUpdate("player_stats", nulledData);
   },
 
   down: (queryInterface, Sequelize) => {
