@@ -12,6 +12,19 @@ const positionMapping = {
   4: "FWD"
 };
 
+const nulledData = {
+  player_score: 0,
+  goals: 0,
+  assists: 0,
+  missed_passes: 0,
+  goals_conceded: 0,
+  saves: 0,
+  yellow_cards: 0,
+  red_cards: 0,
+  transfers_in: 0,
+  transfers_out: 0
+};
+
 const promise = new Promise((resolve, reject) => {
   fs.createReadStream(
     path.resolve(__dirname, "../seed-data/csv/player_stats.csv")
@@ -32,7 +45,12 @@ const promise = new Promise((resolve, reject) => {
       })
     )
     .on("data", data => {
-      results.push({ ...data, transfers_in: 0, transfers_out: 0, createdAt: now, updatedAt: now }); 
+      results.push({
+        ...data,
+        ...nulledData,
+        createdAt: now,
+        updatedAt: now
+      });
     })
     .on("end", () => {
       resolve(results);
