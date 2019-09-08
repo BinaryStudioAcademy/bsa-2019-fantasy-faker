@@ -15,6 +15,3 @@
 
 #### Tech stack
 Node.js | Express | PostgreSQL | Sequelize | socket.io
-
-#### Tested with
-![BrowserStack](./assets/Browserstack-logo.svg)
