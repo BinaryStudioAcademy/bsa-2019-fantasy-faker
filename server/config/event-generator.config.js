@@ -1,23 +1,23 @@
 export const probabilities = {
   game: {
-    attack: 30,
-    foul: 10,
-    out: 10,
+    attack: 70,
+    foul: 5,
+    out: 5,
     nothing: undefined,
     _normalize: true
   },
   afterAttack: {
-    attack: 0.1,
-    shot: 0.4,
-    interception: 0.2,
+    attack: 0.25,
+    shot: 0.25,
+    interception: 0.3,
     foul: 0.1,
     out: 0.1
   },
   afterShot: {
-    goal: 0.3,
-    save: 0.3,
+    goal: 0.2,
+    save: 0.4,
     miss: 0.3,
-    interception: 0.1
+    interception: 0.2
   },
   afterMiss: {
     cornerKick: 0.3,
@@ -25,15 +25,15 @@ export const probabilities = {
     nothing: 0.4
   },
   afterCornerKick: {
-    goal: 0.2,
-    save: 0.4,
-    miss: 0.1,
-    interception: 0.3
+    shot: 0.3,
+    interception: 0.3,
+    attack: 0.3,
+    save: 0.1
   },
   afterFoul: {
-    freeKick: 0.4,
+    freeKick: 0.5,
     trauma: 0.2,
-    penaltyKick: 0.2,
+    penaltyKick: 0.1,
     yellowCard: 0.2
   },
   afterYellowCard: {
@@ -41,13 +41,17 @@ export const probabilities = {
     penaltyKick: 0.2
   },
   afterPenalty: {
-    goal: 0.55,
-    miss: 0.2,
-    save: 0.25
+    goal: 0.3,
+    miss: 0.3,
+    save: 0.4
   },
   afterTrauma: {
     yellowCard: 0.8,
     freeKick: 0.2
+  },
+  afterFreeKick: {
+    shot: 0.3,
+    attack: 0.7
   }
 };
 
@@ -55,23 +59,25 @@ export const events = {
   attack: {
     name: "attack",
     subject: {
-      FWD: 0.5,
-      MID: 0.4,
+      FWD: 0.2,
+      MID: 0.7,
       DEF: 0.1,
       GKP: 0
     },
-    after: "afterAttack"
+    after: "afterAttack",
+    positive: "shot"
   },
   shot: {
     name: "shot",
     direction: "sameTeam",
     subject: {
       FWD: 0.5,
-      MID: 0.3,
-      DEF: 0.15,
-      GKP: 0.05
+      MID: 0.4,
+      DEF: 0.1,
+      GKP: 0
     },
-    after: "afterShot"
+    after: "afterShot",
+    positive: "goal"
   },
 
   foul: {
@@ -132,7 +138,7 @@ export const events = {
       GKP: 0.1
     },
     direction: "otherTeam",
-    after: "afterShot"
+    after: "afterFreeKick"
   },
 
   penaltyKick: {
@@ -144,15 +150,16 @@ export const events = {
       GKP: 0
     },
     direction: "otherTeam",
-    after: "afterPenalty"
+    after: "afterPenalty",
+    positive: "goal"
   },
 
   interception: {
     name: "interception",
     direction: "otherTeam",
     subject: {
-      FWD: 0.2,
-      MID: 0.3,
+      FWD: 0.05,
+      MID: 0.45,
       DEF: 0.5,
       GKP: 0
     }

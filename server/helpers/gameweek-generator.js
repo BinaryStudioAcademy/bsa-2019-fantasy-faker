@@ -69,7 +69,6 @@ class gameweekGenerator {
           awayClub: awayteam_id,
           id
         });
-        console.log("genaration finished");
       }
       if (!started || !finished) {
         await gameService.updateGameToBeFinished(id);

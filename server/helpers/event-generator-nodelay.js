@@ -1,7 +1,7 @@
 import { eventGenerator } from "./event-generator";
 import * as eventService from "./../api/services/event.service";
 
-const TIME_EVENTS_COUNT = 30;
+const TIME_EVENTS_COUNT = 60;
 
 class eventGeneratorNoDelay extends eventGenerator {
   constructor() {
@@ -68,7 +68,7 @@ class eventGeneratorNoDelay extends eventGenerator {
     };
     this.eventsLog.push(event);
 
-    console.log(event.text);
+    //console.log(event.text);
   }
 }
 
