@@ -7,22 +7,21 @@ export const probabilities = {
     _normalize: true
   },
   afterAttack: {
-    attack: 0.25,
-    shot: 0.25,
-    interception: 0.3,
+    attack: 0.2,
+    shot: 0.4,
+    interception: 0.2,
     foul: 0.1,
     out: 0.1
   },
   afterShot: {
-    goal: 0.2,
-    save: 0.4,
-    miss: 0.3,
-    interception: 0.2
+    goal: 0.25,
+    save: 0.25,
+    miss: 0.25,
+    interception: 0.25
   },
   afterMiss: {
-    cornerKick: 0.3,
-    goalKick: 0.3,
-    nothing: 0.4
+    cornerKick: 0.5,
+    goalKick: 0.5
   },
   afterCornerKick: {
     shot: 0.3,
